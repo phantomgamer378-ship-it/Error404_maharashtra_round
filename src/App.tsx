@@ -14,6 +14,7 @@ import { IdeasView } from './components/ideas/IdeasView';
 import { AssetLibraryView } from './components/assets/AssetLibraryView';
 import { ProjectsView } from './components/projects/ProjectsView';
 import { RawFootageAnalysisView } from './components/footage/RawFootageAnalysisView';
+import { ScriptStudioPage } from './pages/projects/ScriptStudioPage';
 
 import { mockAssets, mockAnalytics } from './data/mockData';
 import { ScoredOpportunity } from './features/opportunity-engine/types';
@@ -131,7 +132,7 @@ export function App() {
             <Route path="projects" element={<ProjectsPage />} />
             <Route path="projects/new" element={<CreatePage />} />
             <Route path="projects/:projectId" element={<div>Project Detail Placeholder</div>} />
-            <Route path="projects/:projectId/script" element={<div>Project Script Placeholder</div>} />
+            <Route path="projects/:projectId/script" element={<ScriptStudioPage />} />
             <Route path="projects/:projectId/footage" element={<div>Project Footage Placeholder</div>} />
             <Route path="projects/:projectId/editor/:clipId" element={<div>Project Editor Placeholder</div>} />
             <Route path="projects/:projectId/adapt" element={<div>Project Adapt Placeholder</div>} />
