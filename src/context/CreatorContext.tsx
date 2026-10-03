@@ -60,7 +60,11 @@ const CreatorContext = createContext<CreatorContextValue | null>(null);
 
 export function CreatorProvider({ children }: { children: React.ReactNode }) {
   const { profile, dna, initialize } = useAuthStore();
-  const creator = useMemo(() => ({ ...profile, ...dna }) as any, [profile, dna]);
+  const creator = useMemo(() => ({ 
+    ...profile, 
+    ...dna, 
+    name: profile?.display_name || 'Creator' 
+  }) as any, [profile, dna]);
   const [isOnboarded, setIsOnboarded] = useState(true);
   
   const queryClient = useQueryClient();

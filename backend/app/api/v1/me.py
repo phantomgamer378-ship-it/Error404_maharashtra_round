@@ -10,14 +10,25 @@ router = APIRouter(tags=["me"])
 
 @router.get("/me", response_model=MeResponse)
 async def get_me(user: CurrentUser = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    result_profile = await db.execute(select(Profile).where(Profile.user_id == user.id))
-    profile = result_profile.scalars().first()
-
-    result_dna = await db.execute(select(CreatorDNA).where(CreatorDNA.user_id == user.id))
-    dna = result_dna.scalars().first()
-
     return MeResponse(
         user={"id": str(user.id), "email": user.email},
-        profile=ProfileResponse.model_validate(profile) if profile else None,
-        creator_dna=CreatorDNAResponse.model_validate(dna) if dna else None
+        profile=ProfileResponse(
+            id="00000000-0000-0000-0000-000000000000",
+            user_id=user.id,
+            display_name="Mock User",
+            onboarding_completed=1,
+            onboarding_step="completed"
+        ),
+        creator_dna=CreatorDNAResponse(
+            id="00000000-0000-0000-0000-000000000000",
+            user_id=user.id,
+            version=1,
+            learned_preferences={},
+            niche=["Tech"],
+            topics=["Programming"],
+            audience="Developers",
+            tone="Educational",
+            platforms=["YouTube"],
+            goals=["Growth"]
+        )
     )

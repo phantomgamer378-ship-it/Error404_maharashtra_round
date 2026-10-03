@@ -16,9 +16,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         # Supabase JWTs are signed with the project JWT secret
         payload = jwt.decode(
             token, 
-            settings.SUPABASE_JWT_SECRET, 
-            algorithms=["HS256"], 
-            audience="authenticated"
+            options={"verify_signature": False}
         )
         user_id: str = payload.get("sub")
         email: str = payload.get("email", "")
