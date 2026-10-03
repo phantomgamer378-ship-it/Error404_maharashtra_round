@@ -75,15 +75,32 @@ const FootagePage = () => {
   return <RawFootageAnalysisView onNavigate={(path) => navigate(`/app/${path}`)} onOpenVideoEditor={() => navigate('/app/editor')} />;
 };
 
+// Auth Pages
+import { LoginPage } from './pages/auth/LoginPage';
+import { RegisterPage } from './pages/auth/RegisterPage';
+import { OnboardingWizard } from './pages/onboarding/OnboardingWizard';
+
+// Route Guards
+import { RequireAuth, RequireGuest, RequireOnboarding } from './components/auth/RouteGuards';
+import { useAuthStore } from './store/auth';
+
 // Placeholder Public Pages
 const PublicLayout = ({ children }: { children: React.ReactNode }) => (
   <div className="min-h-screen flex flex-col bg-background text-foreground">
-    <header className="p-4 border-b border-border/50 font-bold text-xl">VIDORA</header>
+    <header className="p-4 border-b border-border/50 font-bold text-xl flex justify-between items-center">
+      <a href="/">VIDORA</a>
+    </header>
     <main className="flex-1 flex flex-col">{children}</main>
   </div>
 );
 
 export function App() {
+  const initializeAuth = useAuthStore((state) => state.initialize);
+
+  React.useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
+
   return (
     <CreatorProvider>
       <BrowserRouter>
@@ -95,21 +112,17 @@ export function App() {
           <Route path="/pricing" element={<PublicLayout><div>Pricing Placeholder</div></PublicLayout>} />
 
           {/* Auth Routes */}
-          <Route path="/login" element={<PublicLayout><div className="flex-1 flex items-center justify-center"><a href="/app/dashboard" className="glass-button px-4 py-2">Simulate Login (Go to Dashboard)</a></div></PublicLayout>} />
-          <Route path="/register" element={<PublicLayout><div>Register Placeholder</div></PublicLayout>} />
-          <Route path="/forgot-password" element={<PublicLayout><div>Forgot Password Placeholder</div></PublicLayout>} />
-          <Route path="/reset-password" element={<PublicLayout><div>Reset Password Placeholder</div></PublicLayout>} />
+          <Route path="/login" element={<RequireGuest><PublicLayout><LoginPage /></PublicLayout></RequireGuest>} />
+          <Route path="/register" element={<RequireGuest><PublicLayout><RegisterPage /></PublicLayout></RequireGuest>} />
+          <Route path="/forgot-password" element={<RequireGuest><PublicLayout><div>Forgot Password Placeholder</div></PublicLayout></RequireGuest>} />
+          <Route path="/reset-password" element={<RequireGuest><PublicLayout><div>Reset Password Placeholder</div></PublicLayout></RequireGuest>} />
           <Route path="/auth/callback" element={<PublicLayout><div>Auth Callback Placeholder</div></PublicLayout>} />
 
           {/* Onboarding */}
-          <Route path="/onboarding" element={<PublicLayout><div>Onboarding Root</div></PublicLayout>} />
-          <Route path="/onboarding/profile" element={<PublicLayout><div>Onboarding Profile</div></PublicLayout>} />
-          <Route path="/onboarding/dna" element={<PublicLayout><div>Onboarding DNA</div></PublicLayout>} />
-          <Route path="/onboarding/platforms" element={<PublicLayout><div>Onboarding Platforms</div></PublicLayout>} />
-          <Route path="/onboarding/complete" element={<PublicLayout><div>Onboarding Complete</div></PublicLayout>} />
+          <Route path="/onboarding/*" element={<RequireAuth><PublicLayout><OnboardingWizard /></PublicLayout></RequireAuth>} />
 
           {/* Application Routes */}
-          <Route path="/app" element={<AppLayout />}>
+          <Route path="/app" element={<RequireOnboarding><AppLayout /></RequireOnboarding>}>
             <Route index element={<Navigate to="/app/dashboard" replace />} />
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="trends" element={<TrendsPage />} />
