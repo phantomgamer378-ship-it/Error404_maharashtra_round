@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useCreator } from '../context/CreatorContext';
-import { NavigationTab, ScoredOpportunity, IdeaItem } from '../types';
+import { NavigationTab, IdeaItem } from '../types';
+import { ScoredOpportunity } from '../features/opportunity-engine/types';
 
 import { Sidebar } from '../components/layout/Sidebar';
 import { TopBar } from '../components/layout/TopBar';

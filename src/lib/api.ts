@@ -1,13 +1,14 @@
 import { supabase } from './supabase';
 
+// @ts-ignore
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
 
 async function fetchWithAuth(url: string, options: RequestInit = {}) {
   const { data: { session } } = await supabase.auth.getSession();
   
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...options.headers,
+    ...(options.headers as Record<string, string>),
   };
 
   if (session?.access_token) {
@@ -58,6 +59,17 @@ export const apiClient = {
   },
   creatorDna: {
     update: (data: any) => fetchWithAuth('/creator-dna', { method: 'PUT', body: JSON.stringify(data) })
+  },
+  opportunities: {
+    list: () => fetchWithAuth('/opportunities'),
+  },
+  projects: {
+    list: () => fetchWithAuth('/projects'),
+    create: (data: any) => fetchWithAuth('/projects', { method: 'POST', body: JSON.stringify(data) }),
+  },
+  ideas: {
+    list: () => fetchWithAuth('/ideas'),
+    create: (data: any) => fetchWithAuth('/ideas', { method: 'POST', body: JSON.stringify(data) }),
   },
   scripts: {
     get: (projectId: string) => fetchWithAuth(`/scripts/${projectId}`),

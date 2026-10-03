@@ -177,17 +177,18 @@ export function CreatorProvider({ children }: { children: React.ReactNode }) {
   }, [updateIdeaMutation]);
 
   const highOpportunityCount = useMemo(
-    () => opportunities.filter((o) => o.opportunityScore >= 80).length,
+    () => opportunities.filter((o: ScoredOpportunity) => o.opportunityScore >= 80).length,
     [opportunities]
   );
 
   const strongestNiche = useMemo(() => {
-    if (creator.niche.length === 0) return 'Not set';
+    if (!creator?.niche || creator.niche.length === 0) return 'Not set';
     return creator.niche.slice(0, 2).join(' + ');
-  }, [creator.niche]);
+  }, [creator?.niche]);
 
   const audienceInterestDelta = useMemo(() => {
-    const avg = opportunities.reduce((sum, o) => sum + o.trendVelocity, 0) / opportunities.length;
+    if (!opportunities || opportunities.length === 0) return '0%';
+    const avg = opportunities.reduce((sum: number, o: ScoredOpportunity) => sum + o.trendVelocity, 0) / opportunities.length;
     const delta = Math.round((avg - 70) * 0.6);
     return delta > 0 ? `+${delta}%` : `${delta}%`;
   }, [opportunities]);
