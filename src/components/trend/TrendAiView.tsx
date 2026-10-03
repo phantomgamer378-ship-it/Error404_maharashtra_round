@@ -1,15 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Radio, 
-  Sparkles, 
-  Layers, 
-  Target, 
-  TrendingUp, 
-  RefreshCw,
-  SlidersHorizontal,
-  Lightbulb
-} from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { NavigationTab } from '../../types';
 import { ScoredOpportunity } from '../../features/opportunity-engine/types';
 import { TrendRadar } from './TrendRadar';
@@ -42,7 +33,7 @@ export const TrendAiView: React.FC<TrendAiViewProps> = ({
   const [selectedState, setSelectedState] = useState<string>('All');
   const [sortBy, setSortBy] = useState<'opportunity' | 'velocity' | 'fit'>('opportunity');
 
-  // 3. Selected Opportunity (defaults to AI Voice Scams or highest opportunity)
+  // 3. Selected Opportunity (defaults to highest opportunity)
   const [selectedOppId, setSelectedOppId] = useState<string>(
     opportunities[0]?.id || 'ai-voice-scams'
   );
@@ -55,7 +46,7 @@ export const TrendAiView: React.FC<TrendAiViewProps> = ({
       list = list.filter(o => o.evidence.platform === selectedPlatform);
     }
     if (selectedNiche !== 'All') {
-      list = list.filter(o => 
+      list = list.filter(o =>
         o.category.toLowerCase().includes(selectedNiche.toLowerCase()) ||
         o.topic.toLowerCase().includes(selectedNiche.toLowerCase())
       );
@@ -87,34 +78,23 @@ export const TrendAiView: React.FC<TrendAiViewProps> = ({
   return (
     <div className="space-y-8 pb-16 animate-fadeIn">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-semibold mb-2">
-            <Radio className="w-3.5 h-3.5 text-indigo-400 animate-pulse" />
-            <span>REAL-TIME CREATOR INTELLIGENCE</span>
-          </div>
-
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight font-sans">
             Trend.<span className="text-gradient-accent">Ai</span>
           </h1>
-
           <p className="text-sm text-slate-400 mt-1">
             Understand what is moving, why it matters, and where you can create.
           </p>
         </div>
 
-        {/* Header Action */}
+        {/* Header Actions */}
         <div className="flex items-center gap-3 self-start md:self-auto">
           <DemoDataBadge />
-          {activeOpportunity && (
-            <button
-              onClick={() => onStartCreateFromOpportunity(activeOpportunity)}
-              className="px-4 py-2.5 rounded-xl glass-button-primary text-xs font-semibold text-white flex items-center gap-2 shadow-glow-primary shrink-0"
-            >
-              <Sparkles className="w-4 h-4 text-white" />
-              <span>Create Content From Trend</span>
-            </button>
-          )}
+          <button className="px-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-medium text-slate-300 hover:bg-white/[0.08] hover:border-white/20 transition-all flex items-center gap-2">
+            <RefreshCw className="w-3.5 h-3.5 text-slate-400" />
+            <span>Refresh signals</span>
+          </button>
         </div>
       </div>
 
@@ -123,14 +103,14 @@ export const TrendAiView: React.FC<TrendAiViewProps> = ({
         <div className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-lg backdrop-blur-md animate-fadeIn">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400">
-              <Sparkles className="w-4 h-4 animate-pulse" />
+              <RefreshCw className="w-4 h-4 animate-spin" style={{ animationDuration: '3s' }} />
             </div>
             <div>
               <span className="font-bold text-emerald-300 font-mono text-[11px] uppercase tracking-wider block">
                 ⚡ Learning Loop Active: Trend Rankings Updated
               </span>
               <p className="text-slate-300 text-xs mt-0.5">
-                Top opportunities re-ranked based on your latest published performance (+30.4% Question Hook retention).
+                Top opportunities re-ranked based on your latest published performance.
               </p>
             </div>
           </div>
@@ -143,7 +123,7 @@ export const TrendAiView: React.FC<TrendAiViewProps> = ({
         </div>
       )}
 
-      {/* AIThinking state when page opens (Max 1.2s) */}
+      {/* AIThinking state when page opens */}
       <AnimatePresence>
         {isThinking && (
           <motion.div
@@ -159,7 +139,7 @@ export const TrendAiView: React.FC<TrendAiViewProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Filter and Sort Bar */}
+      {/* Filter Bar */}
       <TrendFilterBar
         selectedPlatform={selectedPlatform}
         onChangePlatform={setSelectedPlatform}
@@ -172,52 +152,48 @@ export const TrendAiView: React.FC<TrendAiViewProps> = ({
         totalCount={filteredOpportunities.length}
       />
 
-      {/* 2. TREND RADAR: Topic Nodes Connected as a Network */}
+      {/* Section 1: Trend Radar + Momentum Movers (side by side) */}
       <TrendRadar
         opportunities={filteredOpportunities}
-        selectedId={activeOpportunity.id}
+        selectedId={activeOpportunity?.id || ''}
         onSelectOpportunity={(opp) => setSelectedOppId(opp.id)}
       />
 
-      {/* 3 & 4. TWO-COLUMN LAYOUT: Deep-Dive Opportunity Card + Right Column Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Column: Large Opportunity Card with "Why Now?" Expansion */}
-        <div className="lg:col-span-7 space-y-6">
-          {activeOpportunity && (
-            <OpportunityCard
-              opportunity={activeOpportunity}
-              onOpenCreate={onStartCreateFromOpportunity}
-              isInitialExpanded={true}
-            />
-          )}
-        </div>
-
-        {/* Right Column: Trend Trajectory Chart + Content Gap Finder */}
-        <div className="lg:col-span-5 space-y-6">
-          {activeOpportunity && (
-            <>
-              {/* Trend Trajectory Chart with Hover Tooltips */}
-              <TrendTrajectoryChart
-                trajectory={activeOpportunity.trajectory}
-                topic={activeOpportunity.topic}
-                trendState={activeOpportunity.trendDirection}
-              />
-
-              {/* Content Gaps Section */}
-              <ContentGapSection
-                opportunity={activeOpportunity}
-                onTurnGapIntoIdea={(opp) => {
-                  if (onTurnGapIntoIdea) {
-                    onTurnGapIntoIdea(opp);
-                  } else {
-                    onStartCreateFromOpportunity(opp);
-                  }
-                }}
-              />
-            </>
-          )}
-        </div>
+      {/* Section 2: Opportunity Cards List */}
+      <div className="rounded-3xl glass-panel-l2 p-6 border border-white/10">
+        {filteredOpportunities.map((opp) => (
+          <OpportunityCard
+            key={opp.id}
+            opportunity={opp}
+            onOpenCreate={onStartCreateFromOpportunity}
+            isInitialExpanded={false}
+          />
+        ))}
       </div>
+
+      {/* Section 3: Trend Trajectory + Content Gaps (2-column) */}
+      {activeOpportunity && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left: Trajectory chart */}
+          <TrendTrajectoryChart
+            trajectory={activeOpportunity.trajectory}
+            topic={activeOpportunity.topic}
+            trendState={activeOpportunity.trendDirection}
+          />
+
+          {/* Right: Content Gaps */}
+          <ContentGapSection
+            opportunity={activeOpportunity}
+            onTurnGapIntoIdea={(opp) => {
+              if (onTurnGapIntoIdea) {
+                onTurnGapIntoIdea(opp);
+              } else {
+                onStartCreateFromOpportunity(opp);
+              }
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

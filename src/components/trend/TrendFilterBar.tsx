@@ -1,5 +1,4 @@
 import React from 'react';
-import { Filter, ArrowUpDown, SlidersHorizontal, Sparkles } from 'lucide-react';
 
 interface TrendFilterBarProps {
   selectedPlatform: string;
@@ -13,6 +12,8 @@ interface TrendFilterBarProps {
   totalCount: number;
 }
 
+const TREND_STATES = ['Rising', 'Stable', 'Saturated', 'Declining'] as const;
+
 export const TrendFilterBar: React.FC<TrendFilterBarProps> = ({
   selectedPlatform,
   onChangePlatform,
@@ -25,97 +26,76 @@ export const TrendFilterBar: React.FC<TrendFilterBarProps> = ({
   totalCount,
 }) => {
   return (
-    <div className="rounded-2xl glass-panel-l2 p-3 sm:p-4 border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
-      {/* Left: Filters */}
+    <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+      {/* Left: Trend state pills + dropdowns */}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-slate-400 font-medium flex items-center gap-1.5 mr-1">
-          <SlidersHorizontal className="w-3.5 h-3.5 text-indigo-400" />
-          Filter:
-        </span>
+        {/* Trend state pill buttons */}
+        {TREND_STATES.map((state) => {
+          const isActive = selectedState === state;
+          return (
+            <button
+              key={state}
+              onClick={() => onChangeState(isActive ? 'All' : state)}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                isActive
+                  ? 'bg-white/10 border-white/30 text-white'
+                  : 'bg-transparent border-white/10 text-slate-400 hover:border-white/20 hover:text-slate-300'
+              }`}
+            >
+              {state}
+            </button>
+          );
+        })}
 
-        {/* Platform Selector */}
+        {/* Platform dropdown */}
         <select
           value={selectedPlatform}
           onChange={(e) => onChangePlatform(e.target.value)}
-          className="bg-[#0b0d17] border border-white/10 text-white rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-indigo-400 cursor-pointer"
+          className="bg-transparent border border-white/10 text-slate-300 rounded-full px-3.5 py-1.5 focus:outline-none focus:border-white/30 cursor-pointer appearance-none text-xs"
+          style={{ backgroundImage: 'none' }}
         >
-          <option value="All">All Platforms</option>
-          <option value="TikTok">TikTok</option>
-          <option value="YouTube Shorts">YouTube Shorts</option>
-          <option value="LinkedIn">LinkedIn</option>
-          <option value="Instagram">Instagram</option>
-          <option value="X (Twitter)">X (Twitter)</option>
+          <option value="All" className="bg-[#0b0d17]">All platforms</option>
+          <option value="TikTok" className="bg-[#0b0d17]">TikTok</option>
+          <option value="YouTube Shorts" className="bg-[#0b0d17]">YouTube Shorts</option>
+          <option value="LinkedIn" className="bg-[#0b0d17]">LinkedIn</option>
+          <option value="Instagram" className="bg-[#0b0d17]">Instagram</option>
+          <option value="X (Twitter)" className="bg-[#0b0d17]">X (Twitter)</option>
         </select>
 
-        {/* Niche Selector */}
+        {/* Niche dropdown */}
         <select
           value={selectedNiche}
           onChange={(e) => onChangeNiche(e.target.value)}
-          className="bg-[#0b0d17] border border-white/10 text-white rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-indigo-400 cursor-pointer"
+          className="bg-transparent border border-white/10 text-slate-300 rounded-full px-3.5 py-1.5 focus:outline-none focus:border-white/30 cursor-pointer appearance-none text-xs"
         >
-          <option value="All">All Niches</option>
-          <option value="Cybersecurity">Cybersecurity & AI</option>
-          <option value="Technology">Technology</option>
-          <option value="Student Tech">Student Tech</option>
-          <option value="Productivity">Productivity</option>
+          <option value="All" className="bg-[#0b0d17]">All niches</option>
+          <option value="Cybersecurity" className="bg-[#0b0d17]">Cybersecurity & AI</option>
+          <option value="Technology" className="bg-[#0b0d17]">Technology</option>
+          <option value="Student Tech" className="bg-[#0b0d17]">Student Tech</option>
+          <option value="Productivity" className="bg-[#0b0d17]">Productivity</option>
         </select>
 
-        {/* Trend State Selector */}
+        {/* Sort dropdown */}
         <select
-          value={selectedState}
-          onChange={(e) => onChangeState(e.target.value)}
-          className="bg-[#0b0d17] border border-white/10 text-white rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-indigo-400 cursor-pointer"
+          value={`Sort: ${sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}`}
+          onChange={(e) => {
+            const val = e.target.value.replace('Sort: ', '').toLowerCase();
+            if (val === 'opportunity' || val === 'velocity' || val === 'fit') {
+              onChangeSortBy(val as 'opportunity' | 'velocity' | 'fit');
+            }
+          }}
+          className="bg-transparent border border-white/10 text-slate-300 rounded-full px-3.5 py-1.5 focus:outline-none focus:border-white/30 cursor-pointer appearance-none text-xs"
         >
-          <option value="All">All Trend States</option>
-          <option value="Rising">Rising ↑</option>
-          <option value="Stable">Stable →</option>
-          <option value="Saturated">Saturated ⚠️</option>
+          <option value="Sort: Opportunity" className="bg-[#0b0d17]">Sort: Opportunity</option>
+          <option value="Sort: Velocity" className="bg-[#0b0d17]">Sort: Velocity</option>
+          <option value="Sort: Fit" className="bg-[#0b0d17]">Sort: Fit</option>
         </select>
       </div>
 
-      {/* Right: Sort controls & Count */}
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-1.5">
-          <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-slate-400">Sort by:</span>
-          <div className="flex bg-[#0b0d17] rounded-xl p-0.5 border border-white/10">
-            <button
-              onClick={() => onChangeSortBy('opportunity')}
-              className={`px-2.5 py-1 rounded-lg transition-all ${
-                sortBy === 'opportunity'
-                  ? 'bg-indigo-600 text-white font-semibold shadow-glow-primary'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              Opportunity
-            </button>
-            <button
-              onClick={() => onChangeSortBy('velocity')}
-              className={`px-2.5 py-1 rounded-lg transition-all ${
-                sortBy === 'velocity'
-                  ? 'bg-indigo-600 text-white font-semibold shadow-glow-primary'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              Velocity
-            </button>
-            <button
-              onClick={() => onChangeSortBy('fit')}
-              className={`px-2.5 py-1 rounded-lg transition-all ${
-                sortBy === 'fit'
-                  ? 'bg-indigo-600 text-white font-semibold shadow-glow-primary'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              Creator Fit
-            </button>
-          </div>
-        </div>
-
-        <span className="text-slate-400 font-mono text-[11px] border-l border-white/10 pl-3">
-          {totalCount} Active Signals
-        </span>
-      </div>
+      {/* Right: Count */}
+      <span className="text-slate-500 text-xs">
+        {totalCount} opportunities · estimated from available signals
+      </span>
     </div>
   );
 };

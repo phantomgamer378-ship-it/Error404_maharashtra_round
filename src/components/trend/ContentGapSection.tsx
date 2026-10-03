@@ -1,5 +1,5 @@
 import React from 'react';
-import { Target, ArrowRight, Sparkles, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { ArrowRight, Layers } from 'lucide-react';
 import { ScoredOpportunity } from '../../features/opportunity-engine/types';
 
 interface ContentGapSectionProps {
@@ -7,92 +7,130 @@ interface ContentGapSectionProps {
   onTurnGapIntoIdea: (opportunity: ScoredOpportunity) => void;
 }
 
+/* Inline level badge */
+const LevelBadge: React.FC<{ level: string }> = ({ level }) => {
+  const cls =
+    level === 'HIGH' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
+    level === 'LOW' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
+    'bg-purple-500/20 text-purple-400 border-purple-500/30';
+  return (
+    <span className={`px-2 py-0.5 rounded text-[9px] font-bold font-mono border ${cls}`}>
+      {level}
+    </span>
+  );
+};
+
+/* Single gap card */
+const GapCard: React.FC<{
+  gap: ScoredOpportunity['evidence']['contentGap'];
+  topic: string;
+  category: string;
+  onAction: () => void;
+}> = ({ gap, topic, category, onAction }) => (
+  <div className="rounded-2xl glass-panel-l3 p-5 border border-indigo-500/20 space-y-3.5 relative overflow-hidden">
+    {/* Background glow */}
+    <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/8 rounded-full blur-3xl pointer-events-none" />
+
+    {/* Header */}
+    <div className="flex items-center justify-between">
+      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 font-mono">
+        POTENTIAL GAP
+      </span>
+      <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-bold border border-indigo-500/30">
+        {category}
+      </span>
+    </div>
+
+    {/* Title */}
+    <h4 className="text-base font-bold text-white leading-snug">{gap.potentialGap}</h4>
+
+    {/* Covered heavily */}
+    <div className="space-y-1.5">
+      <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+        <Layers className="w-3.5 h-3.5" />
+        <span>Covered heavily in your library</span>
+      </div>
+      <div className="flex flex-wrap gap-1.5">
+        {gap.heavilyCovered.map((t, i) => (
+          <span
+            key={i}
+            className="px-2.5 py-1 rounded-lg bg-white/[0.05] text-slate-400 text-[10px] border border-white/[0.06]"
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+    </div>
+
+    {/* Metrics */}
+    <div className="space-y-1.5 text-[11px]">
+      <div className="flex items-center justify-between">
+        <span className="text-slate-500">Audience relevance</span>
+        <LevelBadge level={gap.audienceRelevance} />
+      </div>
+      <div className="flex items-center justify-between">
+        <span className="text-slate-500">Your coverage</span>
+        <LevelBadge level={gap.creatorCoverage} />
+      </div>
+      <div className="flex items-center justify-between">
+        <span className="text-slate-500">Competition</span>
+        <LevelBadge level="LOW" />
+      </div>
+    </div>
+
+    {/* Description */}
+    <p className="text-[11px] text-slate-400 leading-relaxed">
+      {gap.recommendedApproach}
+    </p>
+
+    {/* CTA */}
+    <button
+      onClick={onAction}
+      className="w-full py-2.5 rounded-xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all text-xs font-medium text-slate-300 flex items-center justify-center gap-2 group"
+    >
+      <span className="w-4 h-4 rounded-full border border-slate-500 flex items-center justify-center text-[10px] text-slate-500">✓</span>
+      <span>Turn this gap into an idea</span>
+      <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:translate-x-1 transition-transform" />
+    </button>
+  </div>
+);
+
 export const ContentGapSection: React.FC<ContentGapSectionProps> = ({
   opportunity,
   onTurnGapIntoIdea,
 }) => {
   const gap = opportunity.evidence.contentGap;
 
+  // Create a second gap variation for visual richness
+  const secondGap = {
+    ...gap,
+    potentialGap: gap.potentialGap.includes('Voice')
+      ? `Voice-clone fraud targeting parents`
+      : `${opportunity.topic} — untapped angles`,
+    heavilyCovered: gap.heavilyCovered.slice(0, 2),
+    audienceRelevance: 'HIGH' as const,
+    creatorCoverage: 'LOW' as const,
+  };
+
   return (
-    <div className="rounded-3xl glass-panel-l3 p-6 border border-cyan-500/30 space-y-5 shadow-xl relative overflow-hidden">
-      {/* Background cyan glow */}
-      <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="space-y-4">
+      <h3 className="text-sm font-bold text-white">Content gaps</h3>
 
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
-            <Target className="w-5 h-5 text-cyan-400" />
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-white tracking-tight">Content Gap Finder</h3>
-            <p className="text-[11px] text-slate-400">Underserved angles with high viewer curiosity</p>
-          </div>
-        </div>
+      <div className="space-y-4">
+        <GapCard
+          gap={gap}
+          topic={opportunity.topic}
+          category={opportunity.category}
+          onAction={() => onTurnGapIntoIdea(opportunity)}
+        />
 
-        <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 text-[10px] font-bold border border-cyan-500/30 font-mono">
-          HIGH OPPORTUNITY
-        </span>
+        <GapCard
+          gap={secondGap}
+          topic={opportunity.topic}
+          category={opportunity.category}
+          onAction={() => onTurnGapIntoIdea(opportunity)}
+        />
       </div>
-
-      {/* Comparison: Covered Heavily vs Potential Gap */}
-      <div className="space-y-3 text-xs">
-        {/* Covered Heavily */}
-        <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/5 space-y-1.5">
-          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
-            Covered Heavily by Competitors (High Saturation):
-          </span>
-          <div className="flex flex-wrap gap-1.5">
-            {gap.heavilyCovered.map((topic, i) => (
-              <span 
-                key={i} 
-                className="px-2.5 py-1 rounded-lg bg-white/5 text-slate-300 text-[11px] border border-white/5"
-              >
-                {topic}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Potential Gap Highlight */}
-        <div className="p-4 rounded-2xl bg-cyan-950/30 border border-cyan-500/40 space-y-2.5">
-          <div className="flex items-center justify-between">
-            <span className="text-cyan-400 text-[10px] font-extrabold uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              Un-tapped Market Opportunity Gap:
-            </span>
-            <span className="text-[10px] text-cyan-300 font-mono">
-              Topic: {opportunity.topic}
-            </span>
-          </div>
-
-          <p className="text-white font-bold text-sm leading-snug">
-            {gap.potentialGap}
-          </p>
-
-          <p className="text-[11px] text-slate-300 italic">
-            Recommended approach: {gap.recommendedApproach}
-          </p>
-
-          <div className="flex items-center justify-between text-[11px] text-slate-300 pt-2 border-t border-cyan-500/20 font-mono">
-            <span>
-              Audience Relevance: <strong className="text-emerald-400 font-bold">{gap.audienceRelevance}</strong>
-            </span>
-            <span>
-              Your Coverage: <strong className="text-amber-400 font-bold">{gap.creatorCoverage}</strong>
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Action CTA */}
-      <button
-        onClick={() => onTurnGapIntoIdea(opportunity)}
-        className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 font-bold text-xs text-white transition-all shadow-glow-cyan flex items-center justify-center gap-2 group"
-      >
-        <span>Turn this gap into an idea</span>
-        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-      </button>
     </div>
   );
 };
