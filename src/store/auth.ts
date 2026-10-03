@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import { apiClient } from '../lib/api';
 
 interface Profile {
   id: string;
@@ -55,26 +56,21 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       set({ user: session.user });
 
-      // In a real app, this would fetch from /api/v1/me which combines this data
-      // For Phase 2, we simulate fetching the profile & dna status from DB
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .single();
+      try {
+        const data = await apiClient.get('/me');
+        const profile = data.profile;
+        const dna = data.creator_dna;
         
-      const { data: dna } = await supabase
-        .from('creator_dna')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .single();
-
-      set({ 
-        profile: profile || null, 
-        dna: dna || null,
-        isOnboarded: !!profile && !!dna,
-        isLoading: false
-      });
+        set({ 
+          profile: profile || null, 
+          dna: dna || null,
+          isOnboarded: profile?.onboarding_completed === 1,
+          isLoading: false
+        });
+      } catch (err) {
+        console.error("Failed to fetch /me from backend:", err);
+        set({ isLoading: false, isOnboarded: false });
+      }
       
     } catch (error) {
       console.error('Auth initialization failed:', error);

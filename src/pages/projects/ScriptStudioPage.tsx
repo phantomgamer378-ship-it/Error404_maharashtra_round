@@ -3,6 +3,9 @@ import { useParams } from 'react-router-dom';
 import { Sparkles, Save, RotateCcw, PenTool, LayoutTemplate, MessageSquare } from 'lucide-react';
 import { useAuthStore } from '../../store/auth';
 
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiClient } from '../../lib/api';
+
 interface ScriptSection {
   id: string;
   type: string;
@@ -13,31 +16,41 @@ interface ScriptSection {
 export const ScriptStudioPage = () => {
   const { projectId } = useParams();
   const { dna } = useAuthStore();
+  const queryClient = useQueryClient();
   
-  const [sections, setSections] = useState<ScriptSection[]>([
-    { id: '1', type: 'hook', content: 'Did you know AI voice cloning scams are up 400% this month?', status: 'generated' },
-    { id: '2', type: 'context', content: 'Scammers only need a 3-second audio clip from your public social media to clone your voice perfectly.', status: 'approved' },
-    { id: '3', type: 'main_points', content: 'Here are the top 3 ways to protect yourself:\n1. Establish a family safe word.\n2. Ignore unknown callers.\n3. Make social media accounts private.', status: 'edited' },
-    { id: '4', type: 'cta', content: 'Share this video to save a family member from being scammed, and follow for more cybersecurity tips.', status: 'generated' },
-  ]);
+  const { data: scriptData, isLoading: isLoadingScript } = useQuery({
+    queryKey: ['script', projectId],
+    queryFn: () => apiClient.scripts.get(projectId as string),
+    enabled: !!projectId
+  });
 
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
   const [activeTone, setActiveTone] = useState(dna?.tone || 'educational');
+  const [localSections, setLocalSections] = useState<ScriptSection[]>([]);
+
+  // Sync server data to local state for editing
+  React.useEffect(() => {
+    if (scriptData?.sections) {
+      setLocalSections(scriptData.sections);
+    }
+  }, [scriptData]);
+
+  const generateHooksMutation = useMutation({
+    mutationFn: () => apiClient.scripts.generateHooks({ creator_dna: dna, project_context: {} }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['script', projectId] })
+  });
 
   const handleRegenerate = async (sectionId: string) => {
-    setIsGenerating(true);
-    // Simulate API call to /api/v1/scripts/regenerate-section
-    setTimeout(() => {
-      setSections(sections.map(s => {
-        if (s.id === sectionId) {
-          return { ...s, content: s.content + ' [Regenerated based on Creator DNA]', status: 'generated' };
-        }
-        return s;
-      }));
-      setIsGenerating(false);
-    }, 1500);
+    if (sectionId === '1') { // Assuming 1 is hook for this mockup
+      generateHooksMutation.mutate();
+    }
   };
+
+  const isGenerating = generateHooksMutation.isPending;
+
+  const sections = localSections.length > 0 ? localSections : [
+    { id: '1', type: 'hook', content: 'Loading or generating...', status: 'generated' as const }
+  ];
 
   return (
     <div className="flex h-[calc(100vh-8rem)] w-full gap-4">
@@ -105,7 +118,7 @@ export const ScriptStudioPage = () => {
                 className="w-full bg-transparent resize-none outline-none text-slate-200 leading-relaxed min-h-[60px]"
                 value={section.content}
                 onChange={(e) => {
-                  setSections(sections.map(s => s.id === section.id ? { ...s, content: e.target.value, status: 'edited' } : s));
+                  setLocalSections(sections.map(s => s.id === section.id ? { ...s, content: e.target.value, status: 'edited' } : s));
                 }}
               />
             </div>

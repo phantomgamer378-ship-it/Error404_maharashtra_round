@@ -52,15 +52,18 @@ interface CreatorContextValue {
   audienceInterestDelta: string;
 }
 
+import { useAuthStore } from '../store/auth';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiClient } from '../lib/api';
+
 const CreatorContext = createContext<CreatorContextValue | null>(null);
 
 export function CreatorProvider({ children }: { children: React.ReactNode }) {
-  const [creator, setCreator] = useState<CreatorProfile>(mockCreatorProfile);
+  const { profile, dna, initialize } = useAuthStore();
+  const creator = useMemo(() => ({ ...profile, ...dna }) as any, [profile, dna]);
   const [isOnboarded, setIsOnboarded] = useState(true);
-  const [projects, setProjects] = useState<Project[]>(mockProjects);
-  const [ideas, setIdeas] = useState<IdeaItem[]>(mockIdeas);
-  const [activeOpportunityForCreate, setActiveOpportunityForCreate] = useState<ScoredOpportunity | null>(null);
-  const [currentActiveProject, setCurrentActiveProject] = useState<Project | null>(null);
+  
+  const queryClient = useQueryClient();
 
   // Phase 10: Learning Loop & Performance records
   const [performanceRecords, setPerformanceRecords] = useState<PerformanceRecord[]>([]);
@@ -69,68 +72,82 @@ export function CreatorProvider({ children }: { children: React.ReactNode }) {
   const [learningLoopStep, setLearningLoopStep] = useState(0);
   const [activeToast, setActiveToast] = useState<ToastNotification | null>(null);
 
-  // Dynamically compute evaluated opportunities using OpportunityEngine and current Creator DNA
-  const opportunities = useMemo(() => {
-    return evaluateOpportunities(DEMO_TREND_SIGNALS, creator);
-  }, [creator]);
+  const { data: opportunities = [] } = useQuery({
+    queryKey: ['opportunities'],
+    queryFn: () => apiClient.opportunities.list()
+  });
+
+  const { data: projects = [] } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => apiClient.projects.list()
+  });
+
+  const { data: ideas = [] } = useQuery({
+    queryKey: ['ideas'],
+    queryFn: () => apiClient.ideas.list()
+  });
+
+  const [activeOpportunityForCreate, setActiveOpportunityForCreate] = useState<ScoredOpportunity | null>(null);
+  const [currentActiveProject, setCurrentActiveProject] = useState<Project | null>(null);
+
+  const updateCreatorMutation = useMutation({
+    mutationFn: (updates: any) => apiClient.profile.update(updates), // Simple wrapper for hackathon
+    onSuccess: () => {
+      initialize();
+    }
+  });
 
   const updateCreator = useCallback((updates: Partial<CreatorProfile>) => {
-    setCreator((prev) => ({ ...prev, ...updates }));
-  }, []);
+    updateCreatorMutation.mutate(updates);
+  }, [updateCreatorMutation]);
 
-  const completeOnboarding = useCallback((profile: Partial<CreatorProfile>) => {
-    setCreator((prev) => ({ ...prev, ...profile }));
+  const completeOnboarding = useCallback((profileUpdates: Partial<CreatorProfile>) => {
+    updateCreatorMutation.mutate(profileUpdates);
     setIsOnboarded(true);
-  }, []);
+  }, [updateCreatorMutation]);
 
   const resetOnboarding = useCallback(() => {
     setIsOnboarded(false);
   }, []);
 
+  const createProjectMutation = useMutation({
+    mutationFn: (data: Partial<Project>) => apiClient.projects.create(data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['projects'] })
+  });
+
+  const updateProjectMutation = useMutation({
+    mutationFn: ({ id, updates }: { id: string, updates: Partial<Project> }) => apiClient.patch(`/projects/${id}`, updates),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['projects'] })
+  });
+
+  const createIdeaMutation = useMutation({
+    mutationFn: (data: Partial<IdeaItem>) => apiClient.ideas.create(data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['ideas'] })
+  });
+
+  const updateIdeaMutation = useMutation({
+    mutationFn: ({ id, updates }: { id: string, updates: Partial<IdeaItem> }) => apiClient.patch(`/ideas/${id}`, updates),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['ideas'] })
+  });
+
   // Opportunity to Project conversion
   const createProjectFromOpportunity = useCallback((opp: ScoredOpportunity): Project => {
-    const newProject: Project = {
-      id: `proj-${Date.now()}`,
+    const newProject: any = {
       title: `${opp.topic}: ${opp.evidence.suggestedAngle.slice(0, 45)}...`,
       niche: opp.category,
       status: 'Idea',
-      updatedAt: 'Just now',
       duration: opp.evidence.format || '35s',
       thumbnail: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&auto=format&fit=crop&q=80',
       hookText: opp.evidence.hook,
       scriptText: `[Angle]: ${opp.evidence.suggestedAngle}\n\n[Why Now]: ${opp.evidence.whyNow.join(' ')}\n\n[Actionable CTA]: ${opp.evidence.cta}`,
       opportunityScore: opp.opportunityScore,
-      platformVariants: [
-        {
-          platform: 'TikTok',
-          icon: 'Video',
-          format: 'Vertical (9:16)',
-          length: '38s',
-          hook: opp.evidence.hook,
-          scriptSnippet: `Emergency alert format breaking down ${opp.topic}.`,
-          cta: opp.evidence.cta,
-          estimatedReach: '65k - 120k'
-        },
-        {
-          platform: 'YouTube Shorts',
-          icon: 'PlaySquare',
-          format: 'Vertical (9:16)',
-          length: '45s',
-          hook: `If you get an urgent call from family, watch this first.`,
-          scriptSnippet: `Visual forensic test demonstrating audio cloning flaws.`,
-          cta: 'Subscribe for weekly cybersecurity breakdowns.',
-          estimatedReach: '40k - 90k'
-        }
-      ]
     };
 
-    setProjects((prev) => [newProject, ...prev]);
-    setCurrentActiveProject(newProject);
+    createProjectMutation.mutate(newProject);
     setActiveOpportunityForCreate(opp);
 
     // Also add to Ideas page as 'In Progress'
-    const newIdea: IdeaItem = {
-      id: `idea-${Date.now()}`,
+    const newIdea: any = {
       topic: opp.topic,
       angle: opp.evidence.suggestedAngle,
       source: 'Trend.Ai',
@@ -138,30 +155,26 @@ export function CreatorProvider({ children }: { children: React.ReactNode }) {
       status: 'In Progress',
       estimatedDuration: opp.evidence.format || '35s'
     };
-    setIdeas((prev) => [newIdea, ...prev]);
+    createIdeaMutation.mutate(newIdea);
 
-    return newProject;
-  }, []);
+    return newProject as Project;
+  }, [createProjectMutation, createIdeaMutation]);
 
   const addProject = useCallback((project: Project) => {
-    setProjects((prev) => [project, ...prev]);
-  }, []);
+    createProjectMutation.mutate(project);
+  }, [createProjectMutation]);
 
   const updateProject = useCallback((id: string, updates: Partial<Project>) => {
-    setProjects((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, ...updates } : p))
-    );
-  }, []);
+    updateProjectMutation.mutate({ id, updates });
+  }, [updateProjectMutation]);
 
   const addIdea = useCallback((idea: IdeaItem) => {
-    setIdeas((prev) => [idea, ...prev]);
-  }, []);
+    createIdeaMutation.mutate(idea);
+  }, [createIdeaMutation]);
 
   const updateIdeaStatus = useCallback((id: string, status: IdeaItem['status']) => {
-    setIdeas((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, status } : item))
-    );
-  }, []);
+    updateIdeaMutation.mutate({ id, updates: { status } });
+  }, [updateIdeaMutation]);
 
   const highOpportunityCount = useMemo(
     () => opportunities.filter((o) => o.opportunityScore >= 80).length,
@@ -228,7 +241,7 @@ export function CreatorProvider({ children }: { children: React.ReactNode }) {
 
     updatedProfile.importedPerformanceRecords = records;
     updatedProfile.learningInsights = insights;
-    setCreator(updatedProfile);
+    updateCreator(updatedProfile);
     await new Promise((r) => setTimeout(r, 600));
 
     // Step 5: Recommendations Improved
@@ -248,10 +261,7 @@ export function CreatorProvider({ children }: { children: React.ReactNode }) {
       const insight = prev.find((i) => i.id === insightId);
       if (!insight) return prev;
 
-      setCreator((current) => {
-        const updated = learningService.applyInsightToCreator(insight, current);
-        return updated;
-      });
+      updateCreator(learningService.applyInsightToCreator(insight, creator));
 
       triggerToast({
         title: '✨ DNA Calibrated',

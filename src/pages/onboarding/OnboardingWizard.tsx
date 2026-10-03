@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/auth';
+import { apiClient } from '../../lib/api';
 
 export const OnboardingWizard = () => {
   const { user, initialize } = useAuthStore();
@@ -29,17 +29,15 @@ export const OnboardingWizard = () => {
 
     try {
       // 1. Save Profile
-      const { error: profileError } = await supabase.from('profiles').upsert({
-        user_id: user.id,
+      await apiClient.profile.update({
         display_name: displayName,
         bio,
+        onboarding_completed: 1,
+        onboarding_step: 'completed'
       });
 
-      if (profileError) throw profileError;
-
       // 2. Save DNA
-      const { error: dnaError } = await supabase.from('creator_dna').upsert({
-        user_id: user.id,
+      await apiClient.creatorDna.update({
         niche: [niche],
         audience,
         tone,
@@ -47,8 +45,6 @@ export const OnboardingWizard = () => {
         platforms: [],
         goals: []
       });
-
-      if (dnaError) throw dnaError;
 
       // Force store refresh
       await initialize();

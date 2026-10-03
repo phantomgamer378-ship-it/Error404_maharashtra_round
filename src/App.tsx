@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useOutletContext, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { apiClient } from './lib/api';
 import { CreatorProvider, useCreator } from './context/CreatorContext';
 import { AppLayout } from './layouts/AppLayout';
 
@@ -56,8 +58,12 @@ const EditorPage = () => {
 };
 
 const AnalyticsPage = () => {
+  const { data: analytics = null } = useQuery({
+    queryKey: ['analytics', 'global'],
+    queryFn: () => apiClient.analytics.getStats('global')
+  });
   const navigate = useNavigate();
-  return <AnalyticsView analytics={mockAnalytics} onNavigate={(path) => navigate(`/app/${path}`)} />;
+  return <AnalyticsView analytics={analytics || mockAnalytics} onNavigate={(path) => navigate(`/app/${path}`)} />;
 };
 
 const DnaPage = () => {
@@ -67,8 +73,12 @@ const DnaPage = () => {
 };
 
 const AssetsPage = () => {
+  const { data: assets = [] } = useQuery({
+    queryKey: ['assets', 'general'],
+    queryFn: () => apiClient.assets.listByProject('general') // Assuming 'general' for library
+  });
   const navigate = useNavigate();
-  return <AssetLibraryView assets={mockAssets} onNavigate={(path) => navigate(`/app/${path}`)} onOpenVideoEditor={() => navigate('/app/editor')} onOpenFootageAnalysis={() => navigate('/app/footage')} />;
+  return <AssetLibraryView assets={assets} onNavigate={(path) => navigate(`/app/${path}`)} onOpenVideoEditor={() => navigate('/app/editor')} onOpenFootageAnalysis={() => navigate('/app/footage')} />;
 };
 
 const FootagePage = () => {
@@ -95,6 +105,9 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from './lib/queryClient';
+
 export function App() {
   const initializeAuth = useAuthStore((state) => state.initialize);
 
@@ -103,8 +116,9 @@ export function App() {
   }, [initializeAuth]);
 
   return (
-    <CreatorProvider>
-      <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <CreatorProvider>
+        <BrowserRouter>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<PublicLayout><div className="flex-1 flex items-center justify-center p-8"><h1 className="text-4xl font-bold">Public Landing Page</h1><a href="/login" className="ml-4 text-primary hover:underline">Login</a></div></PublicLayout>} />
@@ -150,8 +164,9 @@ export function App() {
             <Route path="settings/preferences" element={<div>Settings Preferences Placeholder</div>} />
           </Route>
         </Routes>
-      </BrowserRouter>
-    </CreatorProvider>
+        </BrowserRouter>
+      </CreatorProvider>
+    </QueryClientProvider>
   );
 }
 

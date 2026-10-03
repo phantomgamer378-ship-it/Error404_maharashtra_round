@@ -28,6 +28,7 @@ import {
   SAMPLE_FOOTAGE_METADATA 
 } from '../../lib/services/FootageService';
 import { useCreator } from '../../context/CreatorContext';
+import { apiClient } from '../../lib/api';
 import { Project, NavigationTab } from '../../types';
 import { ScoreRing } from '../ui/ScoreRing';
 import { DemoDataBadge } from '../ui/DemoDataBadge';
@@ -101,11 +102,26 @@ export const RawFootageAnalysisView: React.FC<RawFootageAnalysisViewProps> = ({
     }
 
     if (file) {
-      const processed = await footageService.processUploadedFootage(
-        file,
-        isScriptAttached ? selectedScriptTitle : undefined
-      );
-      runProcessingPipeline(processed);
+      try {
+        // 1. Request upload signature from API
+        const uploadRes = await apiClient.assets.requestUpload({
+          filename: file.name,
+          content_type: file.type,
+          size: file.size
+        });
+        
+        // 2. Confirm upload with backend (Simulating actual file upload)
+        await apiClient.assets.confirmUpload(uploadRes.asset_id);
+        
+        // 3. Fallback to local fake processing for the complex UI metadata
+        const processed = await footageService.processUploadedFootage(
+          file,
+          isScriptAttached ? selectedScriptTitle : undefined
+        );
+        runProcessingPipeline(processed);
+      } catch (err) {
+        console.error("Upload failed", err);
+      }
     }
   };
 
