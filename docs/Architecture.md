@@ -1,76 +1,25 @@
-# VIDORA Architecture Specification
+# Backend Architecture
 
-## 1. Directory Structure
+## Overview
+VIDORA's backend is a Modular Monolith built on FastAPI and SQLAlchemy 2.0 (Async). It enforces strict boundaries between domains (Identity, Content, Media, Editor, Analytics) while running as a single deployment unit to maximize engineering velocity and minimize operational complexity.
 
-```
-app/
-  (routes)/
-    page.tsx (Dashboard)
-    trend-ai/page.tsx
-    ideas/page.tsx
-    create/page.tsx
-    projects/page.tsx
-    assets/page.tsx
-    analytics/page.tsx
-    creator-dna/page.tsx
-    design-system/page.tsx
-  layout.tsx
-  globals.css
-components/
-  ui/
-    GlassCard.tsx
-    GlassPanel.tsx
-    Button.tsx
-    Badge.tsx
-    Tag.tsx
-    Tooltip.tsx
-    Dialog.tsx
-    Drawer.tsx
-    Tabs.tsx
-    Progress.tsx
-    ScoreRing.tsx
-    Sparkline.tsx
-    Skeleton.tsx
-    EmptyState.tsx
-    AIThinking.tsx
-    DemoDataBadge.tsx
-  layout/
-    Sidebar.tsx
-    TopBar.tsx
-    BottomNav.tsx
-    AppShell.tsx
-features/
-  trend/
-  editor/
-  dna/
-  analytics/
-lib/
-  services/
-    TrendService.ts
-    OpportunityService.ts
-    CreatorService.ts
-    ContentService.ts
-    FootageService.ts
-    EditorAIService.ts
-    AnalyticsService.ts
-data/
-  demo/
-    creator.ts
-    trends.ts
-    projects.ts
-    assets.ts
-    analytics.ts
-hooks/
-  useGlassTheme.ts
-  useCreatorDNA.ts
-types/
-  index.ts
-```
+## Core Components
+- **API Layer**: FastAPI (`app.api.v1`). Validates input, parses tokens via dependency injection, and returns Pydantic responses.
+- **Domain Services**: Business logic (`app.services`). Handlers for LLM Generation, Trend Scoring, Media Alignment. 
+- **Data Access Layer**: SQLAlchemy Async (`app.db`).
+- **Background Orchestration**: Celery/Redis (`analysis_jobs` table as durable source of truth).
+- **Authentication**: JWT validation against Supabase Auth using asymmetric public keys.
+- **Storage**: Supabase Storage with strict RLS and signed URLs. No public footage bucket.
 
-## 2. Domain Types (Section 6)
+## Data Flow
+1. **Request**: Arrives at FastAPI.
+2. **Auth**: `get_current_user` decodes JWT and asserts validity.
+3. **Authorization**: Route queries database using the verified `user.id`.
+4. **Service**: Core logic executes (e.g., scoring, AI generation).
+5. **Persistence**: Mutations are written to Postgres.
+6. **Background**: Expensive tasks (Whisper, LLM) drop durable job records into `analysis_jobs` and dispatch Celery tasks.
 
-- `CreatorProfile`: name, avatar, niche, audience, tone, languages, preferredFormats, hookStyle, visualStyle, bestTopics, averageDuration, source: 'demo' | 'live'
-- `TrendOpportunity`: id, topic, category, opportunityScore, trendVelocity, audienceFit, creatorFit, competition, trendDirection, saturationLevel, summary, whyNowReasoning, trajectory, contentGap, source: 'demo' | 'live'
-- `ProjectItem`: id, title, niche, status, updatedAt, duration, thumbnail, hookText, scriptText, opportunityScore, keyMoments, platformVariants, contentVariants, source: 'demo' | 'live'
-- `AssetItem`: id, title, type, duration, size, tags, thumbnail, dateAdded, aiDescription, source: 'demo' | 'live'
-- `AnalyticsData`: totalViews, viewsGrowth, watchTime, avgRetention, engagementRate, topPerformingTopic, insights, retentionCurve, platformDistribution, source: 'demo' | 'live'
+## Security Principles
+- **Never Trust the Client**: Writable paths, owner IDs, and state transitions are always server-controlled.
+- **Idempotency**: All background operations expect duplicate delivery and handle it gracefully.
+- **Optimistic Concurrency**: The timeline editor rejects concurrent mutation without silently overwriting.
