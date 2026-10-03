@@ -20,14 +20,23 @@ def health_check():
     return {"status": "ok", "version": "1.0.0"}
 
 from app.modules.opportunities.router import router as opp_router
+from app.modules.opportunities.router import router as opp_router
 from app.modules.ideas.router import router as ideas_router
 from app.modules.projects.router import router as projects_router
 from app.modules.scripts.router import router as scripts_router
+from app.modules.assets.router import router as assets_router
+from app.modules.jobs.router import router as jobs_router
+from app.modules.editor.router import router as editor_router
+from app.modules.analytics.router import router as analytics_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(opp_router)
 api_router.include_router(ideas_router)
 api_router.include_router(projects_router)
 api_router.include_router(scripts_router)
+api_router.include_router(assets_router)
+api_router.include_router(jobs_router)
+api_router.include_router(editor_router)
+api_router.include_router(analytics_router)
 
 app.include_router(api_router)

@@ -133,13 +133,13 @@ export function App() {
             <Route path="projects/new" element={<CreatePage />} />
             <Route path="projects/:projectId" element={<div>Project Detail Placeholder</div>} />
             <Route path="projects/:projectId/script" element={<ScriptStudioPage />} />
-            <Route path="projects/:projectId/footage" element={<div>Project Footage Placeholder</div>} />
-            <Route path="projects/:projectId/editor/:clipId" element={<div>Project Editor Placeholder</div>} />
-            <Route path="projects/:projectId/adapt" element={<div>Project Adapt Placeholder</div>} />
+            <Route path="projects/:projectId/footage" element={<RawFootageAnalysisView onNavigate={(path) => window.location.href = `/app/${path}`} onOpenVideoEditor={() => {}} />} />
+            <Route path="projects/:projectId/editor/:clipId" element={<EditorPage />} />
+            <Route path="projects/:projectId/adapt" element={<CreatePage />} />
             <Route path="create" element={<CreatePage />} />
             <Route path="editor" element={<EditorPage />} />
             <Route path="analytics" element={<AnalyticsPage />} />
-            <Route path="analytics/insights" element={<div>Analytics Insights Placeholder</div>} />
+            <Route path="analytics/insights" element={<AnalyticsPage />} />
             <Route path="dna" element={<DnaPage />} />
             <Route path="assets" element={<AssetsPage />} />
             <Route path="footage" element={<FootagePage />} />
