@@ -157,6 +157,7 @@ export const TrendAiView: React.FC<TrendAiViewProps> = ({
         opportunities={filteredOpportunities}
         selectedId={activeOpportunity?.id || ''}
         onSelectOpportunity={(opp) => setSelectedOppId(opp.id)}
+        onStartCreate={onStartCreateFromOpportunity}
       />
 
       {/* Section 2: Opportunity Cards List */}
