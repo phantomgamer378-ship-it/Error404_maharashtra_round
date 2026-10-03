@@ -1,4 +1,4 @@
-# CreatorAi System Memory
+# VIDORA System Memory
 
 ## Technical Stack
 - Framework: React 18 / Vite SPA + TypeScript (strict mode)

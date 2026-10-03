@@ -1,7 +1,7 @@
-# CreatorAi Product Requirements Document (PRD)
+# VIDORA Product Requirements Document (PRD)
 
 ## Product Vision
-CreatorAi is an AI-powered Creator Operating System connecting trend intelligence (Trend.Ai) with creative video execution (Creator Workspace).
+VIDORA (Visual Intelligence for Digital Optimization, Reach & Amplification) is an AI-powered Creator Operating System connecting trend intelligence (Trend.Ai) with creative video execution (Creator Workspace).
 
 ## Primary User Profile
 - **Name:** Sarth Nilate

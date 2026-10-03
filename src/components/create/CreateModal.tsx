@@ -75,7 +75,7 @@ export const CreateModal: React.FC<CreateModalProps> = ({
     {
       id: 'idea',
       title: 'Create from Idea / Topic',
-      description: 'Enter any raw topic or phrase; CreatorAi crafts full script & hook options tailored to DNA.',
+      description: 'Enter any raw topic or phrase; VIDORA crafts full script & hook options tailored to DNA.',
       icon: Lightbulb,
       keyHint: '2',
       color: 'from-amber-600 to-orange-600'
@@ -154,7 +154,7 @@ export const CreateModal: React.FC<CreateModalProps> = ({
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white">How would you like to create?</h2>
             <p className="text-xs sm:text-sm text-slate-400 mt-1">
-              Select an entry pathway. CreatorAi will inject Sarth's Creator DNA (Educational + Humorous) automatically.
+              Select an entry pathway. VIDORA will inject Sarth's Creator DNA (Educational + Humorous) automatically.
             </p>
           </div>
 

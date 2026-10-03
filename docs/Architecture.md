@@ -1,4 +1,4 @@
-# CreatorAi Architecture Specification
+# VIDORA Architecture Specification
 
 ## 1. Directory Structure
 

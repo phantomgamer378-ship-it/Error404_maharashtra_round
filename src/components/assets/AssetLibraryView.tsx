@@ -107,7 +107,7 @@ export const AssetLibraryView: React.FC<AssetLibraryViewProps> = ({
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl">
-            "Drop your first video and CreatorAi will organize and understand it." Raw master footage, derived 9:16 short clips, scripts, and production audio.
+            "Drop your first video and VIDORA will organize and understand it." Raw master footage, derived 9:16 short clips, scripts, and production audio.
           </p>
         </div>
 

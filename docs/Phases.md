@@ -1,4 +1,4 @@
-# CreatorAi Execution Phases
+# VIDORA Execution Phases
 
 ## Phase 0: System Architecture & Glass System Foundation
 - Design system primitives & tokens.

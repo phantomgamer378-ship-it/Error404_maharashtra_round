@@ -55,7 +55,7 @@ export const AskCreatorAiModal: React.FC<AskCreatorAiModalProps> = ({
       } else if (promptText.toLowerCase().includes('hook')) {
         setResponse("🔥 **3 Generated Hook Variants:**\n1. *If your mom calls crying asking for money, STOP. Ask this 1 word first.*\n2. *That wasn't my real voice. That was an AI clone trained in 3 seconds.*\n3. *I tried to scam my roommate with an AI voice clone...*");
       } else {
-        setResponse(`✨ **CreatorAi Recommendation:** Analyzing your request "${promptText}". I recommend routing to the Creation Studio with Sarth's Creator DNA applied.`);
+        setResponse(`✨ **VIDORA Recommendation:** Analyzing your request "${promptText}". I recommend routing to the Creation Studio with Sarth's Creator DNA applied.`);
       }
     }, 900);
   };
@@ -85,7 +85,7 @@ export const AskCreatorAiModal: React.FC<AskCreatorAiModalProps> = ({
                   handleRunPrompt(query);
                 }
               }}
-              placeholder="Ask CreatorAi... e.g. 'What should I create today?' or 'Generate 3 hooks'"
+              placeholder="Ask VIDORA... e.g. 'What should I create today?' or 'Generate 3 hooks'"
               className="w-full bg-transparent text-white placeholder-slate-400 text-sm focus:outline-none font-medium"
               autoFocus
             />
@@ -104,7 +104,7 @@ export const AskCreatorAiModal: React.FC<AskCreatorAiModalProps> = ({
             <div className="p-6 flex items-center gap-3 text-indigo-300 text-sm">
               <BrainCircuit className="w-5 h-5 animate-spin text-indigo-400" />
               <div className="space-y-1">
-                <p className="font-semibold">CreatorAi is thinking...</p>
+                <p className="font-semibold uppercase tracking-wider text-xs">VIDORA IS THINKING...</p>
                 <p className="text-xs text-slate-400">Searching trends, Creator DNA parameters, & retention signals...</p>
               </div>
             </div>
@@ -168,7 +168,7 @@ export const AskCreatorAiModal: React.FC<AskCreatorAiModalProps> = ({
               <span className="flex items-center gap-1"><Command className="w-3 h-3" /> Navigation</span>
               <span className="flex items-center gap-1"><Wand2 className="w-3 h-3 text-indigo-400" /> AI Natural Command</span>
             </div>
-            <span className="text-slate-500 text-[11px]">CreatorAi Intelligence Operating System v2.4</span>
+            <span className="text-slate-500 text-[11px]">VIDORA Intelligence Operating System v2.4</span>
           </div>
         </motion.div>
       </div>

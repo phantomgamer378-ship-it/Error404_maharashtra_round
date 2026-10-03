@@ -54,7 +54,7 @@ export const PersistentCommandBar: React.FC<PersistentCommandBarProps> = ({
             value={inputVal}
             onChange={(e) => setInputVal(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Ask CreatorAi... e.g. 'Make this more engaging but keep my style' or 'Remove the boring section'"
+            placeholder="Ask VIDORA... e.g. 'Make this more engaging but keep my style' or 'Remove the boring section'"
             className="w-full bg-white/[0.04] border border-white/10 rounded-xl pl-9 pr-9 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-400 font-medium"
           />
           <button

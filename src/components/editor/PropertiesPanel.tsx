@@ -328,7 +328,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
             {/* Custom AI Command Prompt */}
             <div className="pt-3 border-t border-white/10 space-y-2">
               <label className="text-[11px] font-semibold text-slate-300 block">
-                Ask CreatorAi to modify selected scope:
+                Ask VIDORA to modify selected scope:
               </label>
               <div className="relative">
                 <input

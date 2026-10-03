@@ -41,7 +41,7 @@ export const CreatorDnaView: React.FC<CreatorDnaViewProps> = ({
             Creator <span className="text-gradient-accent">DNA</span>
           </h1>
           <p className="text-sm text-slate-400 mt-1">
-            "The AI knows how YOU create." CreatorAi continuously adapts to your style, tone, and audience patterns.
+            "The AI knows how YOU create." VIDORA continuously adapts to your style, tone, and audience patterns.
           </p>
         </div>
 

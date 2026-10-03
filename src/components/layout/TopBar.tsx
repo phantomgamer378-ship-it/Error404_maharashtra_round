@@ -38,7 +38,7 @@ export const TopBar: React.FC<TopBarProps> = ({
               <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
             </div>
           </div>
-          <span className="font-extrabold text-sm text-white">CREATOR<span className="text-indigo-400">AI</span></span>
+          <span className="font-extrabold text-sm bg-gradient-to-r from-white via-indigo-200 to-cyan-400 bg-clip-text text-transparent">VIDORA</span>
         </div>
 
         <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl glass-panel-l2 border border-white/10 text-xs font-medium text-slate-300 hover:text-white cursor-pointer transition-all">
@@ -64,8 +64,8 @@ export const TopBar: React.FC<TopBarProps> = ({
         >
           <div className="flex items-center gap-2">
             <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-400 transition-colors shrink-0" />
-            <span className="truncate hidden sm:inline">Search content, ideas or ask CreatorAi...</span>
-            <span className="truncate sm:hidden">Ask CreatorAi...</span>
+            <span className="truncate hidden sm:inline">Search content, ideas or ask VIDORA...</span>
+            <span className="truncate sm:hidden">Ask VIDORA...</span>
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
@@ -83,13 +83,13 @@ export const TopBar: React.FC<TopBarProps> = ({
 
       {/* Right Controls & Profile */}
       <div className="flex items-center gap-2 md:gap-3">
-        {/* Ask CreatorAi Quick Button */}
+        {/* Ask VIDORA Quick Button */}
         <button
           onClick={onOpenAskModal}
           className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-button text-xs font-semibold text-indigo-300 hover:text-white border-indigo-500/30 shadow-glass-sm"
         >
           <Sparkles className="w-3.5 h-3.5 text-indigo-400 animate-pulse" />
-          <span>Ask CreatorAi</span>
+          <span>Ask VIDORA</span>
         </button>
 
         {/* Notification Bell */}

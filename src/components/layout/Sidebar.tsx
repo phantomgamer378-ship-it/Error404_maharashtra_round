@@ -64,11 +64,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
             </div>
             <div>
-              <div className="flex items-center gap-1">
-                <span className="font-extrabold tracking-tight text-base text-white font-sans">
-                  CREATOR<span className="text-indigo-400">AI</span>
+              <div className="flex items-center gap-1.5">
+                <span className="font-extrabold tracking-tight text-base font-sans bg-gradient-to-r from-white via-indigo-200 to-cyan-400 bg-clip-text text-transparent">
+                  VIDORA
                 </span>
-                <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-indigo-500/20 text-indigo-300 font-mono border border-indigo-500/30">
+                <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-indigo-500/20 text-indigo-300 font-mono border border-indigo-500/30 font-bold">
                   OS
                 </span>
               </div>
@@ -209,6 +209,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className="w-10 h-10 mx-auto rounded-full overflow-hidden border border-indigo-500/40 cursor-pointer hover:scale-105 transition-transform"
           >
             <img src={creator.avatar} alt={creator.name} className="w-full h-full object-cover" />
+          </div>
+        )}
+
+        {!isCollapsed && (
+          <div className="px-2 pt-1 border-t border-white/5 text-[9px] text-slate-400 leading-tight">
+            <span className="font-semibold text-slate-300">About: </span>
+            <span>Visual Intelligence for Digital Optimization, Reach &amp; Amplification.</span>
           </div>
         )}
       </div>

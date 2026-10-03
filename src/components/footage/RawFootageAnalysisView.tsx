@@ -173,7 +173,7 @@ export const RawFootageAnalysisView: React.FC<RawFootageAnalysisViewProps> = ({
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl">
-            Upload raw multi-camera studio recordings or podcasts. CreatorAi detects high-retention moments, matches scripts, and exports vertical 9:16 cuts.
+            Upload raw multi-camera studio recordings or podcasts. VIDORA detects high-retention moments, matches scripts, and exports vertical 9:16 cuts.
           </p>
         </div>
 

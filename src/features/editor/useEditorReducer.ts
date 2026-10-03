@@ -314,7 +314,7 @@ export function useEditorReducer() {
       project: state.project,
       tracks: state.tracks,
       exportedAt: new Date().toISOString(),
-      creatorAiEngineVersion: '2.4-Hackathon',
+      vidoraEngineVersion: '2.4-Hackathon',
       renderSpecs: {
         aspectRatio: state.project.aspectRatio,
         duration: state.project.duration,
@@ -328,7 +328,7 @@ export function useEditorReducer() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${state.project.title.replace(/\s+/g, '_')}_CreatorAi.json`;
+    a.download = `${state.project.title.replace(/\s+/g, '_')}_VIDORA.json`;
     a.click();
     URL.revokeObjectURL(url);
 

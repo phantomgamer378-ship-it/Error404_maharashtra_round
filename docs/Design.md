@@ -1,4 +1,4 @@
-# CreatorAi Design Specification
+# VIDORA Design Specification
 
 ## Glassmorphic Tokens
 

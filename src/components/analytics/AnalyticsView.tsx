@@ -81,7 +81,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
             Performance & <span className="text-gradient-accent">Learning Loop</span>
           </h1>
           <p className="text-sm text-slate-400 mt-1 max-w-2xl">
-            Import real clip performance to trigger the CreatorAi continuous learning cycle: 
+            Import real clip performance to trigger the VIDORA continuous learning cycle: 
             extract patterns, update your Creator DNA, and re-rank future trend opportunities.
           </p>
         </div>

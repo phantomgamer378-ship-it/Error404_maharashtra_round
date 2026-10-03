@@ -1,10 +1,12 @@
 # Error404_maharashtra_round
-## CreatorAi — AI Creator Operating System
+## VIDORA — AI Creator Operating System
 ### Built by Team Error404 for Maharashtra Round
 
 > **"Know what to create, extract what matters, and adapt everywhere."**
+> 
+> *About: Visual Intelligence for Digital Optimization, Reach & Amplification.*
 
-CreatorAi is an intelligent operating system designed for modern creators. It closes the loop between **trend intelligence (Trend.Ai)**, **raw footage intelligence**, **AI-assisted video editing (Studio Editor)**, **multi-platform adaptation**, and **continuous performance learning**.
+VIDORA is an intelligent operating system designed for modern creators. It closes the loop between **trend intelligence (Trend.Ai)**, **raw footage intelligence**, **AI-assisted video editing (Studio Editor)**, **multi-platform adaptation**, and **continuous performance learning**.
 
 ---
 

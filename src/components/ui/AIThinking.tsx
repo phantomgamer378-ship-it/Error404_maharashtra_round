@@ -113,7 +113,7 @@ export const AIThinking: React.FC<AIThinkingProps> = ({
             {steps[currentStepIndex]}
           </p>
           <p className="text-[11px] text-slate-400 font-mono">
-            CreatorAi Reasoning Engine • Step {currentStepIndex + 1} of {steps.length}
+            VIDORA Reasoning Engine • Step {currentStepIndex + 1} of {steps.length}
           </p>
         </motion.div>
       </AnimatePresence>

@@ -74,7 +74,7 @@ export class EditorAIService {
       // RULE 5: SCOPED EDITING. Check if command tries to silently affect wider project without scope
       if (lowerCmd.includes('entire project') || lowerCmd.includes('all tracks') || lowerCmd.includes('whole video') || lowerCmd.includes('re-edit everything')) {
         rawResult = {
-          summary: `Command asks for full-project modifications. As per Scoped Editing (Rule 5), CreatorAi proposes wider scope confirmation before modifying other tracks.`,
+          summary: `Command asks for full-project modifications. As per Scoped Editing (Rule 5), VIDORA proposes wider scope confirmation before modifying other tracks.`,
           requiresScopeConfirmation: true,
           proposedWiderScope: `All Tracks (Video, Captions, Text, Audio, B-Roll)`,
           operations: [
