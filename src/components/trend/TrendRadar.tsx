@@ -148,11 +148,12 @@ const SignalWaveform: React.FC<{ active: boolean; color: string }> = ({ active, 
   );
 };
 
-/* ─── Rich Data Popping Popover HUD ─── */
+/* ─── Compact Data Popping Popover HUD (boundary safe) ─── */
 interface NodePopoverProps {
   opp: ScoredOpportunity;
   timeHorizon: TimeHorizon;
   position: 'top' | 'bottom';
+  posX: number;
   onSelect: () => void;
   onStartCreate?: (opp: ScoredOpportunity) => void;
 }
@@ -161,6 +162,7 @@ const NodePopover: React.FC<NodePopoverProps> = ({
   opp,
   timeHorizon,
   position,
+  posX,
   onSelect,
   onStartCreate,
 }) => {
@@ -180,195 +182,176 @@ const NodePopover: React.FC<NodePopoverProps> = ({
       ? `-${Math.round(opp.trendVelocity * 0.28)}%`
       : `+${Math.round(opp.trendVelocity * 0.08)}%`;
 
-  // Insight reasoning snippet
   const insightSnippet =
     opp.whyNowReasoning?.[0] ||
     opp.summary ||
-    'High velocity breakout signal detected across search & video feeds.';
+    'High velocity breakout signal detected across feeds.';
+
+  // Boundary clamping: if near left edge, shift right; if near right edge, shift left
+  const horizClass =
+    posX < 26
+      ? 'left-[-12px]'
+      : posX > 74
+      ? 'right-[-12px]'
+      : 'left-1/2 -translate-x-1/2';
+
+  const arrowClass =
+    posX < 26
+      ? 'left-6'
+      : posX > 74
+      ? 'right-6'
+      : 'left-1/2 -translate-x-1/2';
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: position === 'top' ? 12 : -12, scale: 0.92 }}
+      initial={{ opacity: 0, y: position === 'top' ? 8 : -8, scale: 0.94 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: position === 'top' ? 8 : -8, scale: 0.92 }}
-      transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+      exit={{ opacity: 0, y: position === 'top' ? 6 : -6, scale: 0.94 }}
+      transition={{ duration: 0.18, ease: 'easeOut' }}
       className={`absolute z-50 pointer-events-auto ${
-        position === 'top' ? 'bottom-full mb-3.5' : 'top-full mt-3.5'
-      } left-1/2 -translate-x-1/2 w-[310px] select-none`}
+        position === 'top' ? 'bottom-full mb-2.5' : 'top-full mt-2.5'
+      } ${horizClass} w-[220px] select-none`}
       onClick={(e) => e.stopPropagation()}
     >
       <div
-        className="rounded-2xl bg-[#0d0f1b]/95 backdrop-blur-2xl border border-white/15 shadow-2xl overflow-hidden"
+        className="rounded-xl bg-[#0c0e18]/95 backdrop-blur-xl border border-white/15 shadow-xl overflow-hidden"
         style={{
-          boxShadow: `0 16px 48px -8px rgba(0,0,0,0.8), 0 0 32px -4px ${cfg.glow}`,
+          boxShadow: `0 12px 32px -4px rgba(0,0,0,0.8), 0 0 20px -2px ${cfg.glow}`,
         }}
       >
-        {/* Top telemetry bar */}
-        <div className="px-3.5 py-1.5 bg-white/[0.03] border-b border-white/[0.06] flex items-center justify-between text-[9px] font-mono text-slate-400">
-          <div className="flex items-center gap-1.5">
+        {/* Micro Telemetry Bar */}
+        <div className="px-2.5 py-1 bg-white/[0.03] border-b border-white/[0.06] flex items-center justify-between text-[8px] font-mono text-slate-400">
+          <div className="flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-            <span className="text-slate-300 uppercase tracking-widest font-semibold">SIGNAL TELEMETRY</span>
+            <span className="text-slate-300 font-bold tracking-wider">RADAR SIGNAL</span>
           </div>
-          <div className="flex items-center gap-2">
-            <SignalWaveform active={true} color={cfg.color} />
-            <span className="text-slate-400">{timeHorizon.toUpperCase()}</span>
-          </div>
+          <span className="text-slate-400 font-semibold">{timeHorizon.toUpperCase()}</span>
         </div>
 
         {/* Header: Title + Category + Direction */}
-        <div className="px-4 pt-3.5 pb-2.5">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex items-center gap-2.5 min-w-0">
+        <div className="px-3 pt-2 pb-1.5 border-b border-white/[0.04]">
+          <div className="flex items-center justify-between gap-1.5">
+            <div className="flex items-center gap-1.5 min-w-0">
               <div
-                className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border"
+                className="w-5 h-5 rounded-md flex items-center justify-center shrink-0 border"
                 style={{
                   backgroundColor: `${cfg.color}15`,
                   borderColor: `${cfg.color}35`,
                 }}
               >
-                <TopicIcon className="w-4 h-4" style={{ color: cfg.color }} />
+                <TopicIcon className="w-3 h-3" style={{ color: cfg.color }} />
               </div>
-              <div className="min-w-0">
-                <h4 className="text-sm font-bold text-white tracking-tight truncate leading-tight">
-                  {opp.topic}
-                </h4>
-                <p className="text-[10px] text-slate-400 font-medium truncate mt-0.5">
-                  {opp.category}
-                </p>
-              </div>
+              <h4 className="text-xs font-bold text-white tracking-tight truncate">
+                {opp.topic}
+              </h4>
             </div>
 
             <span
-              className={`px-2 py-0.5 rounded-full text-[10px] font-bold border shrink-0 flex items-center gap-1 ${cfg.bg} ${cfg.border} ${cfg.text}`}
+              className={`px-1.5 py-0.5 rounded-full text-[9px] font-bold border shrink-0 flex items-center gap-0.5 ${cfg.bg} ${cfg.border} ${cfg.text}`}
             >
-              <StateIcon className="w-3 h-3" />
+              <StateIcon className="w-2.5 h-2.5" />
               {opp.trendDirection}
             </span>
           </div>
         </div>
 
-        {/* 4-Cell Metric Grid with Data "Pops" */}
-        <div className="px-4 py-2 grid grid-cols-2 gap-2 bg-white/[0.015]">
-          {/* Metric 1: Velocity */}
-          <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06]">
-            <div className="flex items-center justify-between text-[9px] text-slate-400 font-mono uppercase tracking-wider">
-              <span>Velocity</span>
+        {/* Compact 2x2 Metric Grid */}
+        <div className="px-3 py-2 grid grid-cols-2 gap-1.5 bg-white/[0.015]">
+          {/* Velocity */}
+          <div className="p-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+            <div className="flex items-center justify-between text-[8px] text-slate-400 font-mono">
+              <span>VELOCITY</span>
               <span className={`font-bold ${cfg.text}`}>{weeklyDelta}</span>
             </div>
-            <div className="flex items-baseline gap-1 mt-1">
-              <span className="text-xl font-extrabold text-white font-mono">{displayVelocity}</span>
-              <span className="text-[10px] text-slate-500 font-mono">/100</span>
-            </div>
-            <div className="w-full h-1 bg-white/[0.06] rounded-full overflow-hidden mt-1.5">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${displayVelocity}%` }}
-                transition={{ duration: 0.5 }}
-                className="h-full rounded-full"
-                style={{ backgroundColor: cfg.color }}
-              />
+            <div className="flex items-baseline gap-0.5 mt-0.5">
+              <span className="text-sm font-extrabold text-white font-mono">{displayVelocity}</span>
+              <span className="text-[8px] text-slate-500 font-mono">/100</span>
             </div>
           </div>
 
-          {/* Metric 2: Creator & Audience Fit */}
-          <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06]">
-            <div className="flex items-center justify-between text-[9px] text-slate-400 font-mono uppercase tracking-wider">
-              <span>Audience Fit</span>
+          {/* Fit */}
+          <div className="p-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+            <div className="flex items-center justify-between text-[8px] text-slate-400 font-mono">
+              <span>FIT</span>
               <span className="text-indigo-300 font-bold">MATCH</span>
             </div>
-            <div className="flex items-baseline gap-1 mt-1">
-              <span className="text-xl font-extrabold text-white font-mono">{opp.audienceFit}</span>
-              <span className="text-[10px] text-slate-500 font-mono">/100</span>
-            </div>
-            <div className="w-full h-1 bg-white/[0.06] rounded-full overflow-hidden mt-1.5">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${opp.audienceFit}%` }}
-                transition={{ duration: 0.5, delay: 0.05 }}
-                className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-cyan-400"
-              />
+            <div className="flex items-baseline gap-0.5 mt-0.5">
+              <span className="text-sm font-extrabold text-white font-mono">{opp.audienceFit}</span>
+              <span className="text-[8px] text-slate-500 font-mono">/100</span>
             </div>
           </div>
 
-          {/* Metric 3: Saturation */}
-          <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06]">
-            <div className="flex items-center justify-between text-[9px] text-slate-400 font-mono uppercase tracking-wider">
-              <span>Saturation</span>
+          {/* Saturation */}
+          <div className="p-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+            <div className="flex items-center justify-between text-[8px] text-slate-400 font-mono">
+              <span>COMP</span>
               <span className="text-amber-300 font-bold">{opp.competition}</span>
             </div>
-            <div className="flex items-baseline gap-1 mt-1">
-              <span className="text-xl font-extrabold text-white font-mono">{opp.competitionScore}</span>
-              <span className="text-[10px] text-slate-500 font-mono">/100</span>
-            </div>
-            <div className="w-full h-1 bg-white/[0.06] rounded-full overflow-hidden mt-1.5">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${opp.competitionScore}%` }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="h-full rounded-full bg-amber-400"
-              />
+            <div className="flex items-baseline gap-0.5 mt-0.5">
+              <span className="text-sm font-extrabold text-white font-mono">{opp.competitionScore}</span>
+              <span className="text-[8px] text-slate-500 font-mono">/100</span>
             </div>
           </div>
 
-          {/* Metric 4: Opportunity Score */}
-          <div className="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/25">
-            <div className="flex items-center justify-between text-[9px] text-indigo-300 font-mono uppercase tracking-wider">
-              <span>Opportunity</span>
+          {/* Opportunity */}
+          <div className="p-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/25">
+            <div className="flex items-center justify-between text-[8px] text-indigo-300 font-mono">
+              <span>SCORE</span>
               <span className="text-indigo-400 font-bold">ALPHA</span>
             </div>
-            <div className="flex items-baseline gap-1 mt-1">
-              <span className="text-xl font-extrabold text-indigo-200 font-mono">{opp.opportunityScore}</span>
-              <span className="text-[10px] text-indigo-400/70 font-mono">/100</span>
-            </div>
-            <div className="w-full h-1 bg-indigo-950 rounded-full overflow-hidden mt-1.5">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${opp.opportunityScore}%` }}
-                transition={{ duration: 0.5, delay: 0.15 }}
-                className="h-full rounded-full bg-gradient-to-r from-indigo-400 to-purple-400"
-              />
+            <div className="flex items-baseline gap-0.5 mt-0.5">
+              <span className="text-sm font-extrabold text-indigo-200 font-mono">{opp.opportunityScore}</span>
+              <span className="text-[8px] text-indigo-400/70 font-mono">/100</span>
             </div>
           </div>
         </div>
 
-        {/* AI Insight Catalyst Note */}
-        <div className="px-4 py-2.5 bg-white/[0.02] border-t border-white/[0.06]">
-          <div className="flex items-start gap-2">
-            <span className="text-[10px] text-indigo-400 font-mono font-bold shrink-0 mt-0.5">⚡ CATALYST:</span>
-            <p className="text-[11px] text-slate-300 leading-snug line-clamp-2">
-              {insightSnippet}
-            </p>
+        {/* Opportunity Score Glow Bar */}
+        <div className="px-3 pb-1">
+          <div className="w-full h-1 bg-white/[0.06] rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500"
+              style={{ width: `${opp.opportunityScore}%` }}
+            />
           </div>
         </div>
 
-        {/* Action Bar */}
-        <div className="px-4 py-2.5 bg-white/[0.04] border-t border-white/[0.08] flex items-center justify-between gap-2">
+        {/* 1-Line Catalyst Snippet */}
+        <div className="px-3 py-1.5 bg-white/[0.02] border-t border-white/[0.06]">
+          <p className="text-[9.5px] text-slate-300 leading-snug line-clamp-1">
+            <span className="text-indigo-400 font-bold font-mono mr-1">WHY:</span>
+            {insightSnippet}
+          </p>
+        </div>
+
+        {/* Compact Action Footer */}
+        <div className="px-3 py-1.5 bg-white/[0.03] border-t border-white/[0.06] flex items-center justify-between gap-1">
           <button
             onClick={() => onSelect()}
-            className="text-[10px] text-slate-400 hover:text-white transition-colors font-mono flex items-center gap-1"
+            className="text-[9px] text-slate-400 hover:text-white transition-colors font-mono flex items-center gap-0.5"
           >
-            <span>Lock Target Details</span>
-            <ArrowUpRight className="w-3 h-3" />
+            <span>Lock Target</span>
+            <ArrowUpRight className="w-2.5 h-2.5" />
           </button>
 
           {onStartCreate && (
             <button
               onClick={() => onStartCreate(opp)}
-              className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-bold text-[10px] flex items-center gap-1.5 shadow-md shadow-indigo-500/25 transition-all"
+              className="px-2 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[9px] flex items-center gap-1 shadow transition-all"
             >
-              <Zap className="w-3 h-3 fill-current" />
-              <span>Create Idea</span>
+              <Zap className="w-2.5 h-2.5 fill-current" />
+              <span>Create</span>
             </button>
           )}
         </div>
       </div>
 
-      {/* Pointing triangle */}
+      {/* Pointing Arrow */}
       <div
-        className={`absolute left-1/2 -translate-x-1/2 w-3.5 h-3.5 rotate-45 bg-[#0d0f1b] border border-white/15 ${
+        className={`absolute ${arrowClass} w-2.5 h-2.5 rotate-45 bg-[#0c0e18] border border-white/15 ${
           position === 'top'
-            ? 'bottom-[-7px] border-t-0 border-l-0'
-            : 'top-[-7px] border-b-0 border-r-0'
+            ? 'bottom-[-5px] border-t-0 border-l-0'
+            : 'top-[-5px] border-b-0 border-r-0'
         }`}
       />
     </motion.div>
@@ -847,7 +830,8 @@ export const TrendRadar: React.FC<TrendRadarProps> = ({
                     <NodePopover
                       opp={opp}
                       timeHorizon={timeHorizon}
-                      position={pos.y < 42 ? 'bottom' : 'top'}
+                      position={pos.y < 36 ? 'bottom' : 'top'}
+                      posX={pos.x}
                       onSelect={() => onSelectOpportunity(opp)}
                       onStartCreate={onStartCreate}
                     />
