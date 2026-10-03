@@ -6,6 +6,8 @@ import { WhyNowPanel } from './WhyNowPanel';
 
 interface OpportunityCardProps {
   opportunity: ScoredOpportunity;
+  isSelected?: boolean;
+  onSelect?: () => void;
   onOpenCreate: (opportunity: ScoredOpportunity) => void;
   isInitialExpanded?: boolean;
 }
@@ -73,6 +75,8 @@ const MetricBar: React.FC<{ label: string; value: number; color?: string }> = ({
 
 export const OpportunityCard: React.FC<OpportunityCardProps> = ({
   opportunity,
+  isSelected = false,
+  onSelect,
   onOpenCreate,
   isInitialExpanded = false,
 }) => {
@@ -92,7 +96,14 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
     opportunity.competitionScore;
 
   return (
-    <div className="border-b border-white/[0.06] py-6 first:pt-0 last:border-b-0">
+    <div
+      onClick={() => onSelect?.()}
+      className={`p-5 rounded-2xl border transition-all cursor-pointer ${
+        isSelected
+          ? 'border-indigo-500/50 bg-indigo-500/[0.05] shadow-lg shadow-indigo-500/10'
+          : 'border-white/[0.06] hover:bg-white/[0.02] hover:border-white/10'
+      }`}
+    >
       <div className="flex flex-col lg:flex-row lg:items-center gap-5">
         {/* Left: Badges + Topic info */}
         <div className="lg:w-[280px] shrink-0 space-y-2">
@@ -104,6 +115,12 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
             {hasContentGap && (
               <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-400 text-[10px] font-mono">
                 Content gap · LOW coverage
+              </span>
+            )}
+            {isSelected && (
+              <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-mono font-bold border border-indigo-500/40 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping" />
+                Active Trajectory
               </span>
             )}
           </div>
@@ -137,11 +154,29 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
           <MetricBar label="Competition" value={competitionValue} color="#818CF8" />
         </div>
 
-        {/* Right: Why now? + Create content */}
-        <div className="shrink-0 flex flex-col gap-2.5 lg:w-[160px]">
+        {/* Right: Inspect Trajectory + Why now? + Create content */}
+        <div className="shrink-0 flex flex-col gap-2 lg:w-[170px]">
           <button
-            onClick={() => setIsWhyNowExpanded(!isWhyNowExpanded)}
-            className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-medium text-slate-300 hover:bg-white/[0.08] hover:border-white/20 transition-all flex items-center justify-center gap-2"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect?.();
+              document.getElementById('trend-trajectory-section')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className={`w-full px-3 py-1.5 rounded-xl border text-[11px] font-mono font-bold flex items-center justify-center gap-1.5 transition-all ${
+              isSelected
+                ? 'bg-indigo-600/30 border-indigo-500/50 text-indigo-200'
+                : 'bg-white/[0.04] border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.08]'
+            }`}
+          >
+            <span>{isSelected ? 'Viewing Trajectory ↓' : 'Inspect Trajectory ↓'}</span>
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsWhyNowExpanded(!isWhyNowExpanded);
+            }}
+            className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-medium text-slate-300 hover:bg-white/[0.08] hover:border-white/20 transition-all flex items-center justify-center gap-2"
           >
             <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
             <span>Why now?</span>
@@ -153,8 +188,12 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
           </button>
 
           <button
-            onClick={() => onOpenCreate(opportunity)}
-            className="w-full px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-xs font-bold text-white transition-all flex items-center justify-center gap-2"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect?.();
+              onOpenCreate(opportunity);
+            }}
+            className="w-full px-3 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-xs font-bold text-white transition-all flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20"
           >
             Create content
           </button>

@@ -161,20 +161,36 @@ export const TrendAiView: React.FC<TrendAiViewProps> = ({
       />
 
       {/* Section 2: Opportunity Cards List */}
-      <div className="rounded-3xl glass-panel-l2 p-6 border border-white/10">
-        {filteredOpportunities.map((opp) => (
-          <OpportunityCard
-            key={opp.id}
-            opportunity={opp}
-            onOpenCreate={onStartCreateFromOpportunity}
-            isInitialExpanded={false}
-          />
-        ))}
+      <div className="rounded-3xl glass-panel-l2 p-6 border border-white/10 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-white/[0.06]">
+          <div>
+            <h2 className="text-base font-bold text-white tracking-tight">Opportunities for you</h2>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Estimated from available signals — click any opportunity to view its full 8-week trajectory & content gaps.
+            </p>
+          </div>
+          <span className="text-xs font-mono text-slate-500">
+            {filteredOpportunities.length} opportunities
+          </span>
+        </div>
+
+        <div className="space-y-3">
+          {filteredOpportunities.map((opp) => (
+            <OpportunityCard
+              key={opp.id}
+              opportunity={opp}
+              isSelected={opp.id === activeOpportunity?.id}
+              onSelect={() => setSelectedOppId(opp.id)}
+              onOpenCreate={onStartCreateFromOpportunity}
+              isInitialExpanded={false}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Section 3: Trend Trajectory + Content Gaps (2-column) */}
       {activeOpportunity && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div id="trend-trajectory-section" className="grid grid-cols-1 lg:grid-cols-2 gap-6 scroll-mt-6">
           {/* Left: Trajectory chart */}
           <TrendTrajectoryChart
             trajectory={activeOpportunity.trajectory}

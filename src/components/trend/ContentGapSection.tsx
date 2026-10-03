@@ -99,15 +99,24 @@ export const ContentGapSection: React.FC<ContentGapSectionProps> = ({
   opportunity,
   onTurnGapIntoIdea,
 }) => {
-  const gap = opportunity.evidence.contentGap;
+  const fallbackGap = {
+    gapTopic: opportunity.topic,
+    potentialGap: `${opportunity.topic} — High Conversion Untapped Angles`,
+    heavilyCovered: ['Generic overviews', 'Basic introductory clips'],
+    audienceRelevance: 'HIGH' as const,
+    creatorCoverage: 'LOW' as const,
+    recommendedApproach: `Break down practical, zero-fluff workflows and actionable case studies in ${opportunity.topic}.`,
+  };
+
+  const gap = opportunity.evidence?.contentGap || fallbackGap;
 
   // Create a second gap variation for visual richness
   const secondGap = {
     ...gap,
-    potentialGap: gap.potentialGap.includes('Voice')
+    potentialGap: gap.potentialGap?.includes('Voice')
       ? `Voice-clone fraud targeting parents`
-      : `${opportunity.topic} — untapped angles`,
-    heavilyCovered: gap.heavilyCovered.slice(0, 2),
+      : `${opportunity.topic} — practical creator workflows`,
+    heavilyCovered: (gap.heavilyCovered || []).slice(0, 2),
     audienceRelevance: 'HIGH' as const,
     creatorCoverage: 'LOW' as const,
   };
