@@ -63,7 +63,18 @@ export function CreatorProvider({ children }: { children: React.ReactNode }) {
   const creator = useMemo(() => ({ 
     ...profile, 
     ...dna, 
-    name: profile?.display_name || 'Creator' 
+    name: profile?.display_name || 'Creator',
+    avatar: profile?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100',
+    languages: dna?.languages || ['English'],
+    preferredFormats: dna?.preferredFormats || ['Short-Form Video', 'Long-Form Educational'],
+    hookStyle: dna?.hookStyle || 'Direct Question / Curiosity Gap',
+    visualStyle: dna?.visualStyle || 'Dark Mode Minimalist + Neon Accents',
+    bestTopics: dna?.bestTopics || ['Cybersecurity Threats', 'AI Tools', 'Software Engineering Tips'],
+    averageDuration: dna?.averageDuration || '38s - 45s',
+    performancePatterns: dna?.performancePatterns || [
+      { hookType: 'Direct Warning', retentionRate: 72.4, viralProbability: 84, bestPostingTime: 'Tuesday 4PM' },
+      { hookType: 'Curiosity Question', retentionRate: 68.2, viralProbability: 91, bestPostingTime: 'Thursday 11AM' }
+    ]
   }) as any, [profile, dna]);
   const [isOnboarded, setIsOnboarded] = useState(true);
   
