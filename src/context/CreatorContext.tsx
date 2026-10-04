@@ -67,7 +67,7 @@ export function CreatorProvider({ children }: { children: React.ReactNode }) {
     avatar: profile?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100',
     niche: (dna as any)?.niche || ['AI', 'Tech'],
     audience: (dna as any)?.audience || 'Founders & Engineers',
-    tone: (dna as any)?.tone || ['Authoritative', 'Direct'],
+    tone: (dna as any)?.tone ? (Array.isArray((dna as any).tone) ? (dna as any).tone : [(dna as any).tone]) : ['Authoritative', 'Direct'],
     languages: (dna as any)?.languages || ['English'],
     preferredFormats: (dna as any)?.preferredFormats || ['Short-Form Video', 'Long-Form Educational'],
     hookStyle: (dna as any)?.hookStyle || 'Direct Question / Curiosity Gap',
@@ -90,10 +90,47 @@ export function CreatorProvider({ children }: { children: React.ReactNode }) {
   const [learningLoopStep, setLearningLoopStep] = useState(0);
   const [activeToast, setActiveToast] = useState<ToastNotification | null>(null);
 
-  const { data: opportunities = [] } = useQuery({
+  const { data: rawOpportunities = [] } = useQuery({
     queryKey: ['opportunities'],
     queryFn: () => apiClient.opportunities.list()
   });
+
+  const opportunities = useMemo(() => {
+    return rawOpportunities.map((op: any) => {
+      if (op.evidence) return op; // Already in frontend format
+
+      return {
+        ...op,
+        id: op.id || `opp-${Math.random()}`,
+        topic: op.topic || op.title || 'Trending Topic',
+        category: op.category || 'General',
+        opportunityScore: op.overall_score || 85,
+        trendVelocity: op.freshness_score || 70,
+        audienceFit: op.audience_fit_score || 80,
+        creatorFit: op.creator_relevance_score || 75,
+        competition: 'Medium',
+        competitionScore: 50,
+        trendDirection: op.status === 'active' ? 'Rising' : 'Stable',
+        saturationLevel: 30,
+        summary: op.summary || 'A high-potential opportunity based on your creator profile.',
+        whyNowReasoning: [op.why_now?.summary || 'Currently trending in your niche'],
+        factors: {},
+        evidence: {
+          platform: 'All',
+          format: 'Short-Form Video',
+          hook: 'Check this out...',
+          cta: 'Follow for more!',
+          suggestedAngle: op.summary || 'A unique perspective on the trend',
+          whyNow: [op.why_now?.summary || 'Trending'],
+          whyYou: [op.why_you?.summary || 'Good fit']
+        },
+        trajectory: [
+          { date: 'Last month', interest: 40, change: '+10%', context: 'Rising' },
+          { date: 'Now', interest: 80, change: '+40%', context: 'Peak' }
+        ]
+      } as ScoredOpportunity;
+    });
+  }, [rawOpportunities]);
 
   const { data: projects = [] } = useQuery({
     queryKey: ['projects'],
