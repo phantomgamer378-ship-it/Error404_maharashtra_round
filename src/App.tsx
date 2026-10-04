@@ -95,11 +95,17 @@ import { OnboardingWizard } from './pages/onboarding/OnboardingWizard';
 import { RequireAuth, RequireGuest, RequireOnboarding } from './components/auth/RouteGuards';
 import { useAuthStore } from './store/auth';
 
+// Public Pages
+import { LandingPage } from './pages/public/LandingPage';
+
+import { ThemeToggle } from './components/common/ThemeToggle';
+
 // Placeholder Public Pages
 const PublicLayout = ({ children }: { children: React.ReactNode }) => (
   <div className="min-h-screen flex flex-col bg-background text-foreground">
     <header className="p-4 border-b border-border/50 font-bold text-xl flex justify-between items-center">
       <a href="/">VIDORA</a>
+      <ThemeToggle />
     </header>
     <main className="flex-1 flex flex-col">{children}</main>
   </div>
@@ -121,7 +127,7 @@ export function App() {
         <BrowserRouter>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<PublicLayout><div className="flex-1 flex items-center justify-center p-8"><h1 className="text-4xl font-bold">Public Landing Page</h1><a href="/login" className="ml-4 text-primary hover:underline">Login</a></div></PublicLayout>} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/features" element={<PublicLayout><div>Features Placeholder</div></PublicLayout>} />
           <Route path="/how-it-works" element={<PublicLayout><div>How It Works Placeholder</div></PublicLayout>} />
           <Route path="/pricing" element={<PublicLayout><div>Pricing Placeholder</div></PublicLayout>} />

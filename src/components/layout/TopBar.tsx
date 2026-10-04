@@ -11,6 +11,7 @@ import {
   Globe
 } from 'lucide-react';
 import { CreatorProfile } from '../../types';
+import { ThemeToggle } from '../common/ThemeToggle';
 
 interface TopBarProps {
   onOpenCreateModal: () => void;
@@ -91,6 +92,9 @@ export const TopBar: React.FC<TopBarProps> = ({
           <Sparkles className="w-3.5 h-3.5 text-indigo-400 animate-pulse" />
           <span>Ask VIDORA</span>
         </button>
+
+        {/* Theme Toggle */}
+        <ThemeToggle />
 
         {/* Notification Bell */}
         <button className="relative p-2 rounded-xl glass-button text-slate-400 hover:text-white" aria-label="Notifications">
