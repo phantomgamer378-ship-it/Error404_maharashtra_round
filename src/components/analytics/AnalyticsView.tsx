@@ -93,15 +93,15 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
           <button
             onClick={() => importPerformanceData()}
             disabled={isLearningLoopRunning}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold text-white flex items-center gap-2 transition-all shadow-glow-primary ${
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-glow-primary ${
               hasImported 
                 ? 'bg-emerald-600/80 hover:bg-emerald-600 border border-emerald-400/40 text-emerald-100'
-                : 'bg-indigo-600 hover:bg-indigo-500 text-white'
+                : 'bg-white hover:bg-neutral-200 text-black'
             }`}
           >
             {isLearningLoopRunning ? (
               <>
-                <RotateCcw className="w-4 h-4 text-white animate-spin" />
+                <RotateCcw className="w-4 h-4 animate-spin" />
                 <span>Running Learning Loop (Step {learningLoopStep}/5)...</span>
               </>
             ) : hasImported ? (
@@ -111,7 +111,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               </>
             ) : (
               <>
-                <DownloadCloud className="w-4 h-4 text-white" />
+                <DownloadCloud className="w-4 h-4" />
                 <span>Import Performance Data</span>
               </>
             )}

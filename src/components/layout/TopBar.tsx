@@ -34,16 +34,16 @@ export const TopBar: React.FC<TopBarProps> = ({
       <div className="flex items-center gap-3">
         {/* Mobile: Logo pill shown only on mobile */}
         <div className="flex md:hidden items-center gap-1.5">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-600 to-cyan-400 p-[1px] flex items-center justify-center">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-white to-slate-300 p-[1px] flex items-center justify-center">
             <div className="w-full h-full bg-[#0b0d17] rounded-[7px] flex items-center justify-center">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
+              <Sparkles className="w-3.5 h-3.5 text-slate-300" />
             </div>
           </div>
-          <span className="font-extrabold text-sm bg-gradient-to-r from-white via-indigo-200 to-cyan-400 bg-clip-text text-transparent">VIDORA</span>
+          <span className="font-extrabold text-sm text-white">VIDORA</span>
         </div>
 
         <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl glass-panel-l2 border border-white/10 text-xs font-medium text-slate-300 hover:text-white cursor-pointer transition-all">
-          <Layers className="w-3.5 h-3.5 text-indigo-400" />
+          <Layers className="w-3.5 h-3.5 text-slate-400" />
           <span className="text-white font-semibold hidden lg:inline">Sarth's Workspace</span>
           <span className="text-slate-500 font-mono hidden lg:inline">/</span>
           <span className="text-slate-300 truncate max-w-[120px]">AI Voice Scams</span>
@@ -61,17 +61,17 @@ export const TopBar: React.FC<TopBarProps> = ({
       <div className="flex-1 max-w-xl mx-3 md:mx-4">
         <button
           onClick={onOpenAskModal}
-          className="w-full py-2 px-3 md:px-4 rounded-xl glass-panel-l2 border border-white/10 hover:border-indigo-500/40 text-left flex items-center justify-between text-xs text-slate-400 hover:text-slate-200 transition-all group shadow-sm"
+          className="w-full py-2 px-3 md:px-4 rounded-xl glass-panel-l2 border border-white/10 hover:border-white/40 text-left flex items-center justify-between text-xs text-slate-400 hover:text-slate-200 transition-all group shadow-sm"
         >
           <div className="flex items-center gap-2">
-            <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-400 transition-colors shrink-0" />
+            <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-white transition-colors shrink-0" />
             <span className="truncate hidden sm:inline">Search content, ideas or ask VIDORA...</span>
             <span className="truncate sm:hidden">Ask VIDORA...</span>
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
-            <span className="px-2 py-0.5 rounded-md bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-[10px] font-mono font-medium flex items-center gap-1">
-              <Sparkles className="w-2.5 h-2.5 text-indigo-400" />
+            <span className="px-2 py-0.5 rounded-md bg-white/10 border border-white/20 text-slate-300 text-[10px] font-mono font-medium flex items-center gap-1">
+              <Sparkles className="w-2.5 h-2.5 text-slate-300" />
               <span className="hidden sm:inline">Ask AI</span>
               <span className="sm:hidden">AI</span>
             </span>
@@ -87,9 +87,9 @@ export const TopBar: React.FC<TopBarProps> = ({
         {/* Ask VIDORA Quick Button */}
         <button
           onClick={onOpenAskModal}
-          className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-button text-xs font-semibold text-indigo-300 hover:text-white border-indigo-500/30 shadow-glass-sm"
+          className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-button text-xs font-semibold text-slate-300 hover:text-white border-white/20 shadow-glass-sm"
         >
-          <Sparkles className="w-3.5 h-3.5 text-indigo-400 animate-pulse" />
+          <Sparkles className="w-3.5 h-3.5 text-slate-400 animate-pulse" />
           <span>Ask VIDORA</span>
         </button>
 
@@ -99,13 +99,13 @@ export const TopBar: React.FC<TopBarProps> = ({
         {/* Notification Bell */}
         <button className="relative p-2 rounded-xl glass-button text-slate-400 hover:text-white" aria-label="Notifications">
           <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-indigo-500 shadow-glow-primary" />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-white shadow-glow-primary" />
         </button>
 
         {/* Main CTA - hidden on mobile (bottom nav handles it) */}
         <button
           onClick={onOpenCreateModal}
-          className="hidden sm:flex py-2 px-4 rounded-xl glass-button-primary font-semibold text-xs text-white items-center gap-1.5 shadow-glow-primary hover:scale-[1.02] transition-transform"
+          className="hidden sm:flex py-2 px-4 rounded-xl glass-button-primary font-semibold text-xs items-center gap-1.5 shadow-glow-primary hover:scale-[1.02] transition-transform"
         >
           <Plus className="w-4 h-4" />
           <span>+ Create</span>
