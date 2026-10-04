@@ -96,7 +96,8 @@ import { RequireAuth, RequireGuest, RequireOnboarding } from './components/auth/
 import { useAuthStore } from './store/auth';
 
 // Public Pages
-import { LandingPage } from './pages/public/LandingPage';
+import { SublevelStudioLandingPage } from './shaders/landing-pages/LandingPages';
+import './shaders/threeui.css';
 
 import { ThemeToggle } from './components/common/ThemeToggle';
 
@@ -127,7 +128,7 @@ export function App() {
         <BrowserRouter>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<div className="shader-frame h-screen w-screen"><SublevelStudioLandingPage /></div>} />
           <Route path="/features" element={<PublicLayout><div>Features Placeholder</div></PublicLayout>} />
           <Route path="/how-it-works" element={<PublicLayout><div>How It Works Placeholder</div></PublicLayout>} />
           <Route path="/pricing" element={<PublicLayout><div>Pricing Placeholder</div></PublicLayout>} />
