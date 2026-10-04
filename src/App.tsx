@@ -128,8 +128,22 @@ export function App() {
         <BrowserRouter>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<div className="shader-frame h-screen w-screen"><SublevelStudioLandingPage /></div>} />
-          <Route path="/features" element={<PublicLayout><div>Features Placeholder</div></PublicLayout>} />
+          <Route path="/" element={
+            <div className="relative h-screen w-screen overflow-hidden">
+              <header className="absolute top-0 left-0 right-0 z-50 p-4 px-8 flex justify-between items-center text-white bg-black/80 backdrop-blur-md border-b border-white/10 shadow-lg pointer-events-auto">
+                <a href="/" className="font-bold text-2xl tracking-tight flex items-center gap-2">
+                  VIDORA
+                </a>
+                <div className="flex items-center gap-6">
+                  <a href="/login" className="text-sm font-medium hover:text-white/80 transition-colors">Log in</a>
+                  <a href="/register" className="text-sm font-semibold bg-white text-black px-5 py-2.5 rounded-full hover:bg-neutral-200 transition-colors shadow-sm">Sign up</a>
+                </div>
+              </header>
+              <div className="shader-frame h-full w-full">
+                <SublevelStudioLandingPage />
+              </div>
+            </div>
+          } />          <Route path="/features" element={<PublicLayout><div>Features Placeholder</div></PublicLayout>} />
           <Route path="/how-it-works" element={<PublicLayout><div>How It Works Placeholder</div></PublicLayout>} />
           <Route path="/pricing" element={<PublicLayout><div>Pricing Placeholder</div></PublicLayout>} />
 
