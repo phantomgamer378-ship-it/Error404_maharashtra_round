@@ -70,9 +70,9 @@ export default {
         'glass-sm': '0 4px 16px 0 rgba(0, 0, 0, 0.37)',
         'glass-md': '0 8px 32px 0 rgba(0, 0, 0, 0.45)',
         'glass-lg': '0 16px 48px 0 rgba(0, 0, 0, 0.55)',
-        'glow-primary': '0 0 25px -5px rgba(99, 102, 241, 0.4)',
+        'glow-primary': '0 0 25px -5px rgba(14, 165, 233, 0.4)',
         'glow-cyan': '0 0 25px -5px rgba(6, 182, 212, 0.4)',
-        'glow-violet': '0 0 25px -5px rgba(139, 92, 246, 0.4)',
+        'glow-violet': '0 0 25px -5px rgba(14, 165, 233, 0.32)',
       },
       animation: {
         'pulse-subtle': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',

@@ -193,7 +193,7 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
               onSelect?.();
               onOpenCreate(opportunity);
             }}
-            className="w-full px-3 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-xs font-bold text-white transition-all flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20"
+            className="w-full px-3 py-2 rounded-xl bg-gradient-to-r from-sky-600 to-cyan-600 hover:from-sky-500 hover:to-cyan-500 text-xs font-bold text-white transition-all flex items-center justify-center gap-2 shadow-md shadow-sky-600/20"
           >
             Create content
           </button>

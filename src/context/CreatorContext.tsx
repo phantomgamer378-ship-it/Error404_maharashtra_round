@@ -2,8 +2,6 @@ import React, { createContext, useContext, useState, useCallback, useMemo, useEf
 import { CreatorProfile, Project, IdeaItem, NavigationTab, PerformanceRecord, CreatorInsight } from '../types';
 import { mockCreatorProfile, mockProjects, mockIdeas } from '../data/mockData';
 import { ScoredOpportunity } from '../features/opportunity-engine/types';
-import { DEMO_TREND_SIGNALS } from '../features/opportunity-engine/TrendService';
-import { evaluateOpportunities } from '../features/opportunity-engine/OpportunityEngine';
 import { learningService, PREPARED_PERFORMANCE_RECORDS } from '../lib/services/LearningService';
 
 export interface ToastNotification {
@@ -58,6 +56,23 @@ import { apiClient } from '../lib/api';
 
 const CreatorContext = createContext<CreatorContextValue | null>(null);
 
+const ensureArray = (value: unknown, fallback: string[]): string[] => {
+  if (Array.isArray(value)) {
+    const items = value.filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
+    return items.length > 0 ? items : fallback;
+  }
+
+  if (typeof value === 'string' && value.trim().length > 0) {
+    return [value];
+  }
+
+  return fallback;
+};
+
+const ensureString = (value: unknown, fallback: string): string => {
+  return typeof value === 'string' && value.trim().length > 0 ? value : fallback;
+};
+
 export function CreatorProvider({ children }: { children: React.ReactNode }) {
   const { profile, dna, initialize } = useAuthStore();
   const creator = useMemo(() => ({ 
@@ -65,16 +80,16 @@ export function CreatorProvider({ children }: { children: React.ReactNode }) {
     ...dna, 
     name: profile?.display_name || 'Creator',
     avatar: profile?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100',
-    niche: (dna as any)?.niche || ['AI', 'Tech'],
-    audience: (dna as any)?.audience || 'Founders & Engineers',
-    tone: (dna as any)?.tone ? (Array.isArray((dna as any).tone) ? (dna as any).tone : [(dna as any).tone]) : ['Authoritative', 'Direct'],
-    languages: (dna as any)?.languages || ['English'],
-    preferredFormats: (dna as any)?.preferredFormats || ['Short-Form Video', 'Long-Form Educational'],
-    hookStyle: (dna as any)?.hookStyle || 'Direct Question / Curiosity Gap',
-    visualStyle: (dna as any)?.visualStyle || 'Dark Mode Minimalist + Neon Accents',
-    bestTopics: (dna as any)?.bestTopics || ['Cybersecurity Threats', 'AI Tools', 'Software Engineering Tips'],
-    averageDuration: (dna as any)?.averageDuration || '38s - 45s',
-    performancePatterns: (dna as any)?.performancePatterns || [
+    niche: ensureArray((dna as any)?.niche, ['AI', 'Tech']),
+    audience: ensureString((dna as any)?.audience, 'Founders & Engineers'),
+    tone: ensureArray((dna as any)?.tone, ['Authoritative', 'Direct']),
+    languages: ensureArray((dna as any)?.languages, ['English']),
+    preferredFormats: ensureArray((dna as any)?.preferredFormats || (dna as any)?.platforms, ['Short-Form Video', 'Long-Form Educational']),
+    hookStyle: ensureString((dna as any)?.hookStyle, 'Direct Question / Curiosity Gap'),
+    visualStyle: ensureString((dna as any)?.visualStyle, 'Dark Mode Minimalist + Neon Accents'),
+    bestTopics: ensureArray((dna as any)?.bestTopics || (dna as any)?.topics, ['Cybersecurity Threats', 'AI Tools', 'Software Engineering Tips']),
+    averageDuration: ensureString((dna as any)?.averageDuration, '38s - 45s'),
+    performancePatterns: Array.isArray((dna as any)?.performancePatterns) && (dna as any).performancePatterns.length > 0 ? (dna as any).performancePatterns : [
       { hookType: 'Direct Warning', retentionRate: 72.4, viralProbability: 84, bestPostingTime: 'Tuesday 4PM' },
       { hookType: 'Curiosity Question', retentionRate: 68.2, viralProbability: 91, bestPostingTime: 'Thursday 11AM' }
     ]
@@ -96,7 +111,9 @@ export function CreatorProvider({ children }: { children: React.ReactNode }) {
   });
 
   const opportunities = useMemo(() => {
-    return rawOpportunities.map((op: any) => {
+    const liveOpportunities = Array.isArray(rawOpportunities) ? rawOpportunities : [];
+
+    return liveOpportunities.map((op: any) => {
       if (op.evidence) return op; // Already in frontend format
 
       return {

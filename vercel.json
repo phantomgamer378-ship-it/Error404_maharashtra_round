@@ -1,0 +1,9 @@
+{
+  "name": "error404-maharashtra",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

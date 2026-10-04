@@ -161,8 +161,10 @@ export function App() {
           <Route path="/app" element={<RequireOnboarding><AppLayout /></RequireOnboarding>}>
             <Route index element={<Navigate to="/app/dashboard" replace />} />
             <Route path="dashboard" element={<DashboardPage />} />
-            <Route path="trends" element={<TrendsPage />} />
-            <Route path="trends/:trendId" element={<div>Trend Detail Placeholder</div>} />
+            <Route path="trend-ai" element={<TrendsPage />} />
+            <Route path="trend-ai/:trendId" element={<div>Trend Detail Placeholder</div>} />
+            <Route path="trends" element={<Navigate to="/app/trend-ai" replace />} />
+            <Route path="trends/:trendId" element={<Navigate to="/app/trend-ai" replace />} />
             <Route path="ideas" element={<IdeasPage />} />
             <Route path="projects" element={<ProjectsPage />} />
             <Route path="projects/new" element={<CreatePage />} />
@@ -175,7 +177,8 @@ export function App() {
             <Route path="editor" element={<EditorPage />} />
             <Route path="analytics" element={<AnalyticsPage />} />
             <Route path="analytics/insights" element={<AnalyticsPage />} />
-            <Route path="dna" element={<DnaPage />} />
+            <Route path="creator-dna" element={<DnaPage />} />
+            <Route path="dna" element={<Navigate to="/app/creator-dna" replace />} />
             <Route path="assets" element={<AssetsPage />} />
             <Route path="footage" element={<FootagePage />} />
             <Route path="notifications" element={<div>Notifications Placeholder</div>} />

@@ -310,7 +310,7 @@ const NodePopover: React.FC<NodePopoverProps> = ({
         <div className="px-3 pb-1">
           <div className="w-full h-1 bg-white/[0.06] rounded-full overflow-hidden">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500"
+              className="h-full rounded-full bg-gradient-to-r from-sky-500 to-cyan-500"
               style={{ width: `${opp.opportunityScore}%` }}
             />
           </div>
@@ -337,7 +337,7 @@ const NodePopover: React.FC<NodePopoverProps> = ({
           {onStartCreate && (
             <button
               onClick={() => onStartCreate(opp)}
-              className="px-2 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[9px] flex items-center gap-1 shadow transition-all"
+              className="px-2 py-1 rounded bg-sky-600 hover:bg-sky-500 text-white font-bold text-[9px] flex items-center gap-1 shadow transition-all"
             >
               <Zap className="w-2.5 h-2.5 fill-current" />
               <span>Create</span>
@@ -429,6 +429,20 @@ export const TrendRadar: React.FC<TrendRadarProps> = ({
     },
     [mode, timeHorizon]
   );
+
+  if (opportunities.length === 0) {
+    return (
+      <div className="rounded-3xl glass-panel-l3 p-8 border border-white/10 min-h-[420px] flex flex-col items-center justify-center text-center">
+        <div className="w-14 h-14 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center mb-4">
+          <Radar className="w-7 h-7 text-indigo-300" />
+        </div>
+        <h3 className="text-base font-bold text-white tracking-tight">No trend signals match these filters</h3>
+        <p className="text-sm text-slate-400 mt-2 max-w-md">
+          Adjust the platform, niche, or trend state filters to bring opportunities back into the radar.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">

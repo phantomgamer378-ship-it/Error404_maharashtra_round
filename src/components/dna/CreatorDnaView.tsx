@@ -244,7 +244,7 @@ export const CreatorDnaView: React.FC<CreatorDnaViewProps> = ({
                 </div>
                 <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full"
+                    className="h-full bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full"
                     style={{ width: `${pattern.viralProbability}%` }}
                   />
                 </div>

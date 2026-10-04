@@ -15,6 +15,12 @@ import { AskCreatorAiModal } from '../components/common/AskCreatorAiModal';
 import { PlatformAdaptationDrawer } from '../components/platform/PlatformAdaptationDrawer';
 import { WhatIfVariantEngine } from '../components/platform/WhatIfVariantEngine';
 
+const routeSegmentToTab = (segment?: string): NavigationTab => {
+  if (segment === 'trends') return 'trend-ai';
+  if (segment === 'dna') return 'creator-dna';
+  return (segment as NavigationTab) || 'dashboard';
+};
+
 export const AppLayout: React.FC = () => {
   const { 
     creator, 
@@ -28,7 +34,7 @@ export const AppLayout: React.FC = () => {
   const location = useLocation();
 
   // Extract current tab from URL (fallback to dashboard)
-  const currentTab = (location.pathname.split('/')[2] as NavigationTab) || 'dashboard';
+  const currentTab = routeSegmentToTab(location.pathname.split('/')[2]);
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 

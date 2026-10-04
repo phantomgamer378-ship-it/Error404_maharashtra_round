@@ -70,7 +70,7 @@ export const CreateModal: React.FC<CreateModalProps> = ({
       icon: TrendingUp,
       badge: 'RECOMMENDED',
       keyHint: '1',
-      color: 'from-indigo-600 to-violet-600'
+      color: 'from-sky-600 to-cyan-600'
     },
     {
       id: 'idea',
@@ -103,7 +103,7 @@ export const CreateModal: React.FC<CreateModalProps> = ({
       description: 'Convert past YouTube video or podcast into high-retention TikTok, Reels & LinkedIn posts.',
       icon: Repeat,
       keyHint: '5',
-      color: 'from-purple-600 to-pink-600'
+      color: 'from-blue-600 to-sky-600'
     }
   ];
 
