@@ -65,13 +65,13 @@ export function CreatorProvider({ children }: { children: React.ReactNode }) {
     ...dna, 
     name: profile?.display_name || 'Creator',
     avatar: profile?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100',
-    languages: dna?.languages || ['English'],
-    preferredFormats: dna?.preferredFormats || ['Short-Form Video', 'Long-Form Educational'],
-    hookStyle: dna?.hookStyle || 'Direct Question / Curiosity Gap',
-    visualStyle: dna?.visualStyle || 'Dark Mode Minimalist + Neon Accents',
-    bestTopics: dna?.bestTopics || ['Cybersecurity Threats', 'AI Tools', 'Software Engineering Tips'],
-    averageDuration: dna?.averageDuration || '38s - 45s',
-    performancePatterns: dna?.performancePatterns || [
+    languages: (dna as any)?.languages || ['English'],
+    preferredFormats: (dna as any)?.preferredFormats || ['Short-Form Video', 'Long-Form Educational'],
+    hookStyle: (dna as any)?.hookStyle || 'Direct Question / Curiosity Gap',
+    visualStyle: (dna as any)?.visualStyle || 'Dark Mode Minimalist + Neon Accents',
+    bestTopics: (dna as any)?.bestTopics || ['Cybersecurity Threats', 'AI Tools', 'Software Engineering Tips'],
+    averageDuration: (dna as any)?.averageDuration || '38s - 45s',
+    performancePatterns: (dna as any)?.performancePatterns || [
       { hookType: 'Direct Warning', retentionRate: 72.4, viralProbability: 84, bestPostingTime: 'Tuesday 4PM' },
       { hookType: 'Curiosity Question', retentionRate: 68.2, viralProbability: 91, bestPostingTime: 'Thursday 11AM' }
     ]

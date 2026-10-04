@@ -526,7 +526,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               recommendedDnaUpdate: {
                 field: 'topics',
                 label: 'Top Resonance Topic',
-                oldValue: (creator.topics && creator.topics.length > 0) ? creator.topics[0] : 'AI Security',
+                oldValue: (creator.bestTopics && creator.bestTopics.length > 0) ? creator.bestTopics[0] : 'AI Security',
                 newValue: 'Emergency Defense & Family Safe-Words',
                 impactDescription: 'Trend.Ai will prioritize actionable defense topics over generic policy.',
               },
